@@ -1,0 +1,10 @@
+---
+# Delete Host using Satellite
+- name: Delete hosts from specified Satellte/Foreman hostgroups
+  hosts: all
+  gather_facts: true
+
+  tasks:
+
+    - name: "Delete the host"
+      ansible.builtin.include_tasks: tasks/delete_host.yml

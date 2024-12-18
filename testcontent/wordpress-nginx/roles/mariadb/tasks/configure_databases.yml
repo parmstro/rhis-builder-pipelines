@@ -1,0 +1,48 @@
+---
+
+- name: "Ensure that the database exists - {{ mysql_db.name }}"
+  community.mysql.mysql_db:
+    name: "{{ mysql_db.name }}"
+    collation: "{{ mysqldb.collation | default(omit) }}"
+    encoding: "{{ mysqldb.encoding | default(omit) }}"
+    config_file: "{{ mysqldb.config_file | default(omit) }}"
+    login_host: "{{ mysqldb.login_host | default(omit) }}"
+    login_user: "{{ mysqldb.login_user | default(omit) }}"
+    login_password: "{{ mysqldb.login_password | default(omit) }}"
+    login_port: "{{ mysqldb.login_port | default(omit) }}"
+    pipefail: "{{ mysqldb.pipefail | default(true) }}" # This is the default in future for this module
+    state: "{{ mysqldb.state }}"
+
+- name: "Ensure database users exist"
+  when: mysqldb.users is defined
+  community.mysql.mysql_user:
+    name: "{{ mysqluser.username }}"
+    password: "{{ mysqluser.password }}"
+    encrypted: "{{ mysqluser.encrypted | default(omit) }}"
+    priv: "{{ mysqluser.priv }}"
+    append_privs: "{{ mysqluser.append_priv | default(omit) }}"
+    resource_limits: "{{ mysqluser.resource_limits | default(omit) }}"
+    session_vars: "{{ mysqluser.session_vars | defaul(omit) }}"
+    config_file: "{{ mysqldb.config_file | default(omit) }}"
+    login_host: "{{ mysqldb.login_host | default(omit) }}"
+    login_user: "{{ mysqldb.login_user | default(omit) }}"
+    login_password: "{{ mysqldb.login_password | default(omit) }}"
+    login_port: "{{ mysqldb.login_port | default(omit) }}"
+    state: "{{ mysqluser.state }}"
+  loop: "{{ mysqldb.users }}"
+  loop_control:
+    loop_var: "mysqluser"
+
+- name: "Ensure that any predefined database schema and data loaded"
+  when: mysqldb.scripts is defined
+  community.mysql.mysql_db:
+    name: "{{ mysqldb.name }}"
+    config_file: "{{ mysqldb.config_file | default(omit) }}"
+    login_host: "{{ mysqldb.login_host | default(omit) }}"
+    login_user: "{{ mysqldb.login_user | default(omit) }}"
+    login_password: "{{ mysqldb.login_password | default(omit) }}"
+    login_port: "{{ mysqldb.login_port | default(omit) }}"
+    target: "{{ mysqlquery.file }}"
+  loop: "{{ mysqldb.queries }}"
+  loop_control:
+    loop_var: "mysqlquery"

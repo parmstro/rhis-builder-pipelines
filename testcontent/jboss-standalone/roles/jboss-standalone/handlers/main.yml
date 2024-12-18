@@ -1,0 +1,7 @@
+---
+# Simple Handler
+
+- name: "Restart jboss"
+  ansible.builtin.service:
+    name: "jboss"
+    state: "restarted"

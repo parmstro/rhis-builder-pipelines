@@ -1,0 +1,10 @@
+---
+# This play cleans up content views and leaves only a configured amount remaining
+- name: Publish the configured Content Views and Composite Content Views
+  hosts: all
+  connection: local
+  roles:
+    - role: redhat.satellite.content_view_version_cleanup
+      vars:
+        satellite_content_view_version_cleanup_keep: "{{ num_cvs_to_keep }}" # noqa var-naming[no-role-prefix]
+        search: "{{ cv_search }}"                                            # noqa var-naming[no-role-prefix]

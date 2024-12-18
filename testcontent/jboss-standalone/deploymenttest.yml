@@ -1,0 +1,75 @@
+---
+# This is a simple smoketest of the JBoss App
+# Post a new entry
+# Get the response
+# See if it is available in the rest interface
+
+- name: Test JBoss Deployment
+  hosts: all
+
+  tasks:
+
+    - name: "GET the kitchensink"
+      ansible.builtin.uri:
+        url: "http://{{ ansible_fqdn }}:{{ http_port }}/kitchensink/index.jsf"
+        method: GET
+        return_content: true
+      register: get_result
+
+    - name: "Log GET result"
+      ansible.builtin.debug:
+        var: get_result
+
+    - name: "Generating test data"
+      ansible.builtin.set_fact:
+        random_number: "{{ 1000000000 | random(seed=ansible_date_time.time) }}"
+
+    - name: "Generating test data"
+      ansible.builtin.set_fact:
+        bobs_email: "bobsurunkle{{ random_number }}@bob.ca"
+
+    - name: "POST an entry to the kitchensink"
+      ansible.builtin.uri:
+        url: "http://{{ ansible_fqdn }}:{{ http_port }}/kitchensink/rest/members"
+        method: POST
+        body_format: json
+        body:
+          name: "Bob Surunkle"
+          email: "{{ bobs_email }}"
+          phoneNumber: "5555551212"
+        headers:
+          cookies: "{{ result.set_cookie }}"
+        status_code: 200
+      register: post_result
+
+    - name: "Log POST result"
+      ansible.builtin.debug:
+        var: post_result
+
+    - name: GET the kitchensink with new data
+      ansible.builtin.uri:
+        url: "http://{{ ansible_fqdn }}:{{ http_port }}/kitchensink/rest/members"
+        method: GET
+        return_content: true
+      register: new_get_result
+
+    - name: "Log new GET result"
+      ansible.builtin.debug:
+        var: new_get_result
+
+    - name: "Gather results"
+      ansible.builtin.set_fact:
+        found: "{{ new_get_result.json | json_query(jmesquery) }}"
+      vars:
+        jmesquery: "[? email==`{{ bobs_email }}`].{Name: name, Email: email, Phone: phoneNumber}"
+
+    - name: "Log jmsquery results"
+      ansible.builtin.debug:
+        var: found
+
+    - name: "Assert Result"
+      ansible.builtin.assert:
+        that:
+          - found[0].Email == bobs_email
+          - found[0].Name ==  "Bob Surunkle"
+          - found[0].Phone == "5555551212"

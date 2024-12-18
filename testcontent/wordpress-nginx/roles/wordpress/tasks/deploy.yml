@@ -1,0 +1,97 @@
+---
+
+- name: "Add group 'wordpress'"
+  ansible.builtin.group:
+    name: "wordpress"
+
+- name: "Add user 'wordpress'"
+  ansible.builtin.user:
+    name: "wordpress"
+    group: "wordpress"
+    home: "/srv/wordpress/"
+
+- name: "Fetch random salts for WordPress config" # noqa: command-instead-of-module
+  ansible.builtin.command: "curl https://api.wordpress.org/secret-key/1.1/salt/"
+  register: "wp_salt"
+  changed_when: wp_salt.rc == 0
+  delegate_to: localhost
+
+- name: "Create WordPress database"
+  community.mysql.mysql_db:
+    name: "{{ wp_db_name }}"
+    state: present
+
+- name: "Create WordPress database user"
+  community.mysql.mysql_user:
+    name: "{{ wp_db_user }}"
+    password: "{{ wp_db_password }}"
+    priv: "{{ wp_db_name }}.*:ALL"
+    host: "localhost"
+    state: present
+
+- name: "Copy WordPress config file"
+  ansible.builtin.template:
+    src: "wp-config.php"
+    dest: "/srv/wordpress/"
+    mode: "0640"
+
+- name: Change ownership of WordPress installation
+  ansible.builtin.file:
+    path: "/srv/wordpress/"
+    owner: "wordpress"
+    group: "wordpress"
+    state: directory
+    recurse: true
+
+- name: "Set the SELinux policy for the Wordpress"
+  community.general.sefcontext:
+    setype: "httpd_sys_content_t"
+    target: "/srv/wordpress(/.*)?"
+    state: "present"
+
+- name: "Set the SELinux policy for WordPress configuration"
+  community.general.sefcontext:
+    setype: "httpd_sys_script_exec_t"
+    target: "/srv/wordpress/wp-config.php"
+    state: "present"
+
+- name: "Set the SELinux policy for WordPress content"
+  community.general.sefcontext:
+    setype: "httpd_sys_rw_content_t"
+    target: "/srv/wordpress/wp-content(/.*)?"
+    state: "present"
+
+- name: "Set the SELinux policy for the Php files"
+  community.general.sefcontext:
+    setype: "httpd_sys_script_exec_t"
+    target: "/srv/wordpress/*.php"
+    state: "present"
+
+- name: "Set the SELinux policy for upgrade content"
+  community.general.sefcontext:
+    setype: "httpd_sys_rw_content_t"
+    target: "/srv/wordpress/wp-content/upgrade(/.*)?"
+    state: "present"
+
+- name: "Set the SELinux policy for the uploads content"
+  community.general.sefcontext:
+    setype: "httpd_sys_rw_content_t"
+    target: "/srv/wordpress/wp-content/uploads(/.*)?"
+    state: "present"
+
+- name: "Set the SELinux policy for includes"
+  community.general.sefcontext:
+    setype: "httpd_sys_script_exec_t"
+    target: "/srv/wordpress/wp-includes/*.php"
+    state: "present"
+
+- name: "Active the SELinux policy"  # noqa: command-instead-of-module
+  ansible.builtin.command: "restorecon -Rv /srv/wordpress"
+  register: restorecon_result
+  changed_when: restorecon_result.rc == 0
+
+- name: "Ensure php-fpm is enabled and started"
+  ansible.builtin.service:
+    name: "php-fpm"
+    state: "started"
+    enabled: true

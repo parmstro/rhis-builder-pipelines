@@ -1,0 +1,26 @@
+---
+# Install wordpress from our currated EPEL content view
+# we will only allow Wordpress and its dependencies from the content view
+
+- name: "Install python SELinux"
+  ansible.builtin.dnf:
+    pkg: "python3-policycoreutils"
+    state: present
+
+- name: "Install the php mysql"
+  ansible.builtin.dnf:
+    pkg: "php-mysqlnd"
+    state: present
+
+- name: "Download WordPress"
+  ansible.builtin.get_url:
+    url: "{{ wp_url }}"
+    dest: "/srv/wordpress-{{ wp_version }}.tar.gz"
+    checksum: "{{ wp_checksum }}"
+    mode: "0644"
+
+- name: "Extract archive"
+  ansible.builtin.unarchive:
+    src: "/bin/tar xvf wordpress-{{ wp_version }}.tar.gz"
+    dest: "/srv/"
+    creates: "/srv/wordpress"

@@ -1,0 +1,37 @@
+---
+
+- name: "Deploy the Mysql configuration file"
+  ansible.builtin.template:
+    src: "my.cnf.j2"
+    dest: "/etc/my.cnf"
+    mode: "0644"
+  notify:
+    - "Restart mariadb"
+
+- name: "Create Application Database"
+  community.mysql.mysql_db:
+    name: "{{ mysql_dbname }}"
+    state: "present"
+
+- name: "Create Application DB User"
+  community.mysql.mysql_user:
+    name: "{{ mysql_username }}"
+    password: "{{ mysql_password }}"
+    sql_log_bin: "{{ mysql_sql_log_bin }}"
+    priv: "{{ mysql_user_priv }}"
+    host: "{{ ansible_fqdn }}"
+    state: present
+
+- name: "Copy the sample database build files"
+  ansible.builtin.copy:
+    src: files/{{ item }}
+    dest: /root/{{ item }}
+    mode: "0644"
+  loop:
+    - nation.sql
+
+- name: "Create and Populate the sample database"
+  community.mysql.mysql_db:
+    state: "import"
+    name: "all"
+    target: "/root/nation.sql"

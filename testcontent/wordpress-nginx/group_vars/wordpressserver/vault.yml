@@ -1,0 +1,5 @@
+---
+
+vault_wp_db_name: wordpressdb    # not-secret
+vault_wp_db_user: wpuser         # not-secret
+vault_wp_db_password: s33kr8     # not-secret

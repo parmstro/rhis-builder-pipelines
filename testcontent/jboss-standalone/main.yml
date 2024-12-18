@@ -1,0 +1,24 @@
+---
+
+# This playbook deploys a simple standalone JBoss server.
+
+- name: "Deploy simple JBoss standalone app"
+  hosts: all
+  become: true
+  roles:
+    - jboss-standalone
+
+  tasks:
+
+    - name: "Place a fingerprint file on the server"
+      ansible.builtin.file:
+        path: "{{ app_fingerprint }}"
+        state: "touch"
+        mode: "0644"
+
+    - name: "Display the application path"
+      ansible.builtin.debug:
+        msg: |
+          The application can be found at the following URLs:"
+          "https://{{ ansible_fqdn }}:{{ https_port }}/{{ sample_app_dir }}"
+          "http://{{ ansible_fqdn }}:{{ http_port }}/{{ sample_app_dir }}"

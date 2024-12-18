@@ -1,0 +1,18 @@
+---
+# Deploy and configure MariaDB
+
+- name: "Ensure the prerequisites"
+  ansible.builtin.include_tasks:
+    file: "prerequisites.yml"
+
+- name: "Deploy the configuration"
+  ansible.builtin.include_tasks:
+    file: "deploy.yml"
+
+- name: "Configure databases"
+  when: databases is defined
+  ansible.builtin.include_tasks:
+    file: "configure_databases.yml"
+  loop: "{{ databases }}"
+  loop_control:
+    loop_var: db

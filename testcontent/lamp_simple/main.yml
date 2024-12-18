@@ -1,0 +1,20 @@
+---
+# This playbook deploys the whole application stack in this site.
+
+- name: "Apply common configuration to all nodes"
+  hosts: all
+
+  roles:
+    - common
+
+- name: "Configure and deploy the webservers and application code"
+  hosts: webservers
+
+  roles:
+    - web
+
+- name: "Deploy MySQL and configure the databases"
+  hosts: dbservers
+
+  roles:
+    - db

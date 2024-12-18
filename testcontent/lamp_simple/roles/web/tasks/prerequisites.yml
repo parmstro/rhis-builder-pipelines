@@ -1,0 +1,44 @@
+---
+# These tasks install http and the php modules.
+
+- name: "Install httpd and php"
+  ansible.builtin.dnf:
+    name:
+      - "httpd"
+      - "@php:7.4/common"
+    state: present
+
+- name: "Ensure php modules"
+  ansible.builtin.dnf:
+    name:
+      - "php"
+      - "php-mysqlnd"
+      - "php-mbstring"
+      - "php-opcache"
+      - "php-gd"
+    state: present
+
+- name: "Ensure firewalld is enabled and started"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "started"
+    enabled: true
+
+- name: "Ensure firewalld rules"
+  ansible.posix.firewalld:
+    port: "{{ httpd_port }}/tcp"
+    permanent: true
+    immediate: true
+    state: "enabled"
+
+- name: "Ensure http service state"
+  ansible.builtin.service:
+    name: "httpd"
+    state: "started"
+    enabled: true
+
+- name: "Configure SELinux policy"
+  ansible.posix.seboolean:
+    name: "httpd_can_network_connect_db"
+    state: true
+    persistent: true

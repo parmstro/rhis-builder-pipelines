@@ -1,0 +1,59 @@
+# This play is a simple test of the wordpress deployment
+# Submit configuration information for the default site
+# Check for success
+# GET the default page
+# Check for site name supplied in configuration
+
+
+- name: WordPress deployment test
+  hosts: all
+
+  tasks:
+
+    - name: "Supply a configuration to the default site"
+      ansible.builtin.uri:
+        url: "http://{{ ansible_fqdn }}/wp-admin/install.php?step=2"
+        method: POST
+        body_format: form-urlencoded
+        body:
+          weblog_title: "{{ wp_weblog_title }}"
+          user_name: "{{ wp_user_name }}"
+          admin_password: "{{ wp_admin_password }}"
+          admin_password2: "{{ wp_admin_password }}"
+          pw_weak: "{{ wp_allow_weak_pass }}"
+          admin_email: "{{ wp_admin_email }}"
+          blog_public: "{{ wp_blog_public }}"
+          Submit: "Install WordPress"
+          language: ""
+        status_code: 200
+        return_content: true
+      register: config_result
+
+    - name: "Log the result"
+      ansible.builtin.debug:
+        var: config_result
+
+    # looking for already installed in case someone hits the site right after deployment.
+    - name: Check for success
+      when:
+        - config_result.content is not search("<p>WordPress has been installed. Thank you, and enjoy!</p>")
+        - config_result.content is not search("Already Installed.")
+      ansible.builtin.fail:
+        msg: "Configuration Failed - could not set up default site"
+
+    - name: "GET the default weblog"
+      ansible.builtin.uri:
+        url: "http://{{ ansible_fqdn }}"
+        method: GET
+        status_code: 200
+        return_content: true
+      register: default_weblog_page
+
+    - name: "Check for Site Name supplied in config"
+      when: default_weblog_page.content is not search(wp_weblog_title)
+      ansible.builtin.fail:
+        msg: "Site Check Failed - could not access default weblog {{ wp_weblog_title }}"
+
+    - name: "Log test results"
+      ansible.builtin.debug:
+        msg: "All tests succeeded."

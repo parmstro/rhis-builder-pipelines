@@ -1,0 +1,28 @@
+---
+
+- name: "Generate a test value"
+  ansible.builtin.set_fact:
+    test_value: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+
+- name: "Persist test value"
+  ansible.builtin.copy:
+    dest: /root/testvalue.txt
+    content: "{{ test_value }}"
+    force: true
+    owner: "root"
+    group: "root"
+    mode: "0640"
+
+- name: "Generate target data"
+  ansible.builtin.set_fact:
+    target_ip: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+
+- name: "Deploy application code"
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/var/www/html/{{ item }}"
+    mode: "0644"
+  loop:
+    - index.html
+    - about.html
+    - index.php

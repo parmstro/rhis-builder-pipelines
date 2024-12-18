@@ -1,0 +1,32 @@
+---
+# RHEL8 modules == use group
+# Install base components
+
+- name: "Begin install on RHEL8 Host"
+  when: ansible_distribution_major_version == "8"
+  block:
+
+    - name: "Clean dnf metadata"
+      ansible.builtin.command: "dnf clean all"
+      register: dnf_clean_result
+      changed_when: dnf_clean_result.rc == 0
+
+    - name: "Ensure JBoss repo is enabled"
+      community.general.rhsm_repository:
+        name: "jb-eap-7.4-for-rhel-8-x86_64-rpms"
+        state: "enabled"
+
+    - name: "Install JBoss EAP 7 group and its dependencies - uses jdk1.8"
+      ansible.builtin.dnf:
+        name: "@jboss-eap7"
+        state: "present"
+
+    - name: "Install maven"
+      ansible.builtin.dnf:
+        name: "@maven:3.6"
+        state: "present"
+
+    - name: "Install git"
+      ansible.builtin.dnf:
+        name: "git"
+        state: present

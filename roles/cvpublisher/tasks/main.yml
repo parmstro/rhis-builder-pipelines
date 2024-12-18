@@ -1,0 +1,27 @@
+---
+# This determines if we should publish a content view version
+# based on whether
+#    skip_publish_all has been set to true
+#    the content view has been published within cv.publication_threshold_hours
+#    the content view has been set to force_publish
+
+- name: "Configure publication requirements"
+  ansible.builtin.set_fact:
+    publish_content: false                       # default to false - only publish when necessary
+    hours_since_publication: 8766                # assume the last publication was long ago.. one year - 365.25 days
+    exceeded_publication_threshold_hours: false  # assume we haven't exceeded the threshold
+
+# Process the content views
+- name: "Process Content View {{ cv.name }}"
+  ansible.builtin.include_tasks: "process_cv.yml"
+  loop: "{{ content_views }}"
+  loop_control:
+    loop_var: cv
+
+# Process the composites after all the content views finish
+# This ensures consistency and single publication
+- name: "Process Composite Content View {{ cv.name }}"
+  ansible.builtin.include_tasks: "process_cv.yml"
+  loop: "{{ composite_content_views }}"
+  loop_control:
+    loop_var: cv

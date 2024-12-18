@@ -1,0 +1,19 @@
+---
+
+- name: "Delete the host"
+  redhat.satellite.host:
+    username: "{{ satellite_username }}"
+    password: "{{ satellite_password }}"
+    server_url: "{{ satellite_server_url }}"
+    organization: "{{ satellite_organization }}"
+    location: "{{ satellite_location }}"
+    name: "{{ ansible_fqdn }}"
+    validate_certs: "{{ satellite_validate_certs }}"
+    state: absent
+  register: delete_host_result
+  delegate_to: localhost
+
+- name: "Log result"
+  when: enable_debug_logging
+  ansible.builtin.debug:
+    var: delete_host_result

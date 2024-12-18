@@ -1,0 +1,23 @@
+---
+# This play publishes the configured Content Views and Composite Content Views for the Satellite
+# This is intended for periodic scheduled publishing rather than CV/CCV general maintenance.
+# This is intended for use with an Ansible Automation Platform Workflow
+
+- name: Publish the configured Content Views and Composite Content Views
+  hosts: controller
+  connection: local
+
+  tasks:
+    - name: "Load the vault variables"
+      when: vault_path is defined
+      ansible.builtin.include_vars:
+        file: "{{ vault_path }}"
+
+    - name: "Load the other variables"
+      when: vars_path is defined
+      ansible.builtin.include_vars:
+        file: "{{ vars_path }}"
+
+    - name: "Run the Publish role"
+      ansible.builtin.include_role:
+        name: "cvpublisher"

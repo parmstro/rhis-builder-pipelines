@@ -1,0 +1,43 @@
+---
+
+# Configure the content views
+- name: "Ensure configuration of content views"
+  ansible.builtin.include_tasks: "create_cv.yml"
+  loop: "{{ content_views }}"
+  loop_control:
+    loop_var: cv
+  when: "content_views is defined"
+  tags:
+    - tags_content_management
+    - tags_content_views_configure
+
+- name: "Publish the rhisam content views"
+  ansible.builtin.include_tasks: "publish_cv_version.yml"
+  loop: "{{ content_views }}"
+  loop_control:
+    loop_var: cv
+  when: "content_views is defined"
+  tags:
+    - tags_content_management
+    - tags_content_views_publish
+
+# Configure the composite content views
+- name: "Ensure configuration of the composite content views"
+  ansible.builtin.include_tasks: "create_ccv.yml"
+  loop: "{{ composite_content_views }}"
+  loop_control:
+    loop_var: ccv
+  when: "composite_content_views is defined"
+  tags:
+    - tags_content_management
+    - tags_composite_content_views_configure
+
+- name: "Publish the composite content views"
+  ansible.builtin.include_tasks: "publish_cv_version.yml"
+  loop: "{{ composite_content_views }}"
+  loop_control:
+    loop_var: cv
+  when: "composite_content_views is defined"
+  tags:
+    - tags_content_management
+    - tags_composite_content_views_publish
