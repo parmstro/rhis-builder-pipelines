@@ -12,7 +12,7 @@
     exceeded_publication_threshold_hours: false  # assume we haven't exceeded the threshold
 
 # Process the content views
-- name: "Process Content View {{ cv.name }}"
+- name: "Process Content View"
   ansible.builtin.include_tasks: "process_cv.yml"
   loop: "{{ content_views }}"
   loop_control:
