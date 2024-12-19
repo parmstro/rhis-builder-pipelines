@@ -4,7 +4,7 @@
   redhat.satellite.host:
     username: "{{ satellite_username }}"
     password: "{{ satellite_password }}"
-    server_url: "{{ satellite_server_url }}"
+    server_url: "{{ satellite_url }}"
     organization: "{{ satellite_organization }}"
     location: "{{ satellite_location }}"
     name: "{{ ansible_fqdn }}"

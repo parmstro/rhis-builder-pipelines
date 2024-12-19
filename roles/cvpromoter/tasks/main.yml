@@ -10,7 +10,7 @@
       redhat.satellite.content_view_version:
         username: "{{ satellite_username }}"
         password: "{{ satellite_password }}"
-        server_url: "{{ satellite_server_url }}"
+        server_url: "{{ satellite_url }}"
         organization: "{{ satellite_organization }}"
         validate_certs: "{{ satellite_validate_certs }}"
         content_view: "{{ item.name }}"
@@ -23,7 +23,7 @@
       redhat.satellite.content_view_version:
         username: "{{ satellite_username }}"
         password: "{{ satellite_password }}"
-        server_url: "{{ satellite_server_url }}"
+        server_url: "{{ satellite_url }}"
         organization: "{{ satellite_organization }}"
         validate_certs: "{{ satellite_validate_certs }}"
         content_view: "{{ item.name }}"
