@@ -5,8 +5,9 @@
 # In a workflow model we will call this role multiple times with different configurations during the workflow
 # as we build systems and perform various tests.
 
-- name: Publish the configured Content Views and Composite Content Views
+- name: "Promote the configured Content Views and Composite Content Views"
   hosts: controller
+  connection: local
 
   tasks:
     - name: "Load the vault variables"
@@ -21,4 +22,4 @@
 
     - name: "Run the Promote role"
       ansible.builtin.include_role:
-        name: cvpromoter
+        name: "cvpromoter"
