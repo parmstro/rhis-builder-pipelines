@@ -1,5 +1,12 @@
 ---
 # Called for each content view in content_views
+- name: "Set up the environment"
+  ansible.builtin.set_fact:
+    exceeded_publication_threshold_hours: false
+    hours_since_publication: 0
+    current_dt: ""
+    cvlp_dt: ""
+    publish_content: false
 
 - name: "Get content view info: {{ cv.name }}"
   redhat.satellite.content_view_info:
@@ -34,6 +41,10 @@
     - (hours_since_publication | float) > (cv.publication_threshold_hours | float)
   ansible.builtin.set_fact:
     exceeded_publication_threshold_hours: true
+
+- name: "Log whether we have exceeded publication threshold hours"
+  ansible.builtin.debug:
+    var: exceeded_publication_threshold_hours
 
 - name: "If we have exceeded the threshold and skip_publish_all is false, Publish"
   when:
