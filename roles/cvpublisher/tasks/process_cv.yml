@@ -48,12 +48,12 @@
       ansible.builtin.debug:
         var: exceeded_publication_threshold_hours
 
-    - name: "If we have NOT exceeded the threshold OR skip_publish_all is true, we will not publish"
+    - name: "Turning publishing off due as publication conditions have not been met"
       when: ((not exceeded_publication_threshold_hours) or (skip_publish_all))
       ansible.builtin.set_fact:
         publish_content: false
 
-- name: "If we been asked to force publish *this* content view, Publish"
+- name: "If we been asked to force publish this content view, ensure it it published"
   when: ((cv.force_publish is defined and cv.force_publish) or force_publish_all)
   ansible.builtin.set_fact:
     publish_content: true
@@ -67,7 +67,7 @@
     organization: "{{ satellite_organization }}"
     validate_certs: "{{ satellite_validate_certs }}"
     content_view: "{{ cv.name }}"
-    description: "{{ cv.description | default(omit) }}"
+    description: "{{ description | default(omit) }}"
     version: "{{ cv.version | default(omit) }}" # default is a new version
     lifecycle_environments: "{{ cv.environments | default(omit) }}" # underlying default is publish new version to the library
     state: "{{ cv.state | default(omit) }}" # underlying default is present

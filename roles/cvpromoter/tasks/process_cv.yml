@@ -1,0 +1,29 @@
+---
+# Get the content view information
+# Determine the latest version in the life cycle we are targeting
+# Called for each content view in content_views
+- name: "Set up the environment - assume we want to promote"
+  ansible.builtin.set_fact:
+    exceeded_promotion_threshold_hours: false
+    hours_since_promotion: 0
+    current_dt: ""
+    cvlpr_dt: ""
+    publish_content: true
+
+- name: "If we been asked to force promote the content view, ensure it is promoted"
+  when: ((cv.force_promote is defined and cv.force_promote) or force_promote_all)
+  ansible.builtin.set_fact:
+    promote_content: true
+
+- name: "Promote the content view - {{ cv.name }}"
+  when: promote_content
+  redhat.satellite.content_view_version:
+    username: "{{ satellite_username }}"
+    password: "{{ satellite_password }}"
+    server_url: "{{ satellite_url }}"
+    organization: "{{ satellite_organization }}"
+    validate_certs: "{{ satellite_validate_certs }}"
+    content_view: "{{ cv.name }}"
+    description: "{{ description }}"
+    current_lifecycle_environment: "{{ source_lce }}"
+    lifecycle_environments: "{{ target_lce }}"
