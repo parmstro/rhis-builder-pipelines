@@ -1,0 +1,21 @@
+---
+# Test for cv.publication_threshold_hours
+force_publish_all: false
+skip_publish_all: false
+satellite_validate_certs: true
+
+content_views:
+  - name: EPEL8
+    date_filter_name: ErrataByDate
+    publication_threshold_hours: 4
+  - name: JBossEAP74
+    date_filter_name: ErrataByDate
+    publication_threshold_hours: 3
+  - name: SOE_RHEL8
+    date_filter_name: ErrataByDate
+    publication_threshold_hours: 2
+composite_content_views:
+  - name: SOE_JBoss
+    publication_threshold_hours: 5
+  - name: SOE_RHEL8EPEL
+    publication_threshold_hours: 6

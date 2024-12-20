@@ -1,0 +1,12 @@
+force_publish_all: true
+satellite_validate_certs: true
+content_views:
+  - name: EPEL8
+    date_filter_name: ErrataByDate
+  - name: JBossEAP74
+    date_filter_name: ErrataByDate
+  - name: SOE_RHEL8
+    date_filter_name: ErrataByDate
+composite_content_views:
+  - name: SOE_JBoss
+  - name: SOE_RHEL8EPEL
