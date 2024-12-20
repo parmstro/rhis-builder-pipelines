@@ -12,20 +12,26 @@
   register: cv_info
   changed_when: false
 
-# Satellite returns the time for these values in UTC
-- name: "Determine hours since last publication time"
-  when: cv_info.content_view.last_published
+- name: "Determine the datetime"
   ansible.builtin.set_fact:
-    hours_since_publication: "{{ (now(utc=true) - (cv_info.content_view.last_published[:-4] | to_datetime)).seconds / 3600 | float }}"
+    current_dt: "{{ now(utc=true, fmt='%Y-%m-%d %H:%M:%S') }}"
 
-- name: "Print hours since last publication"
+- name: "Determine last published datetime"
+  ansible.builtin.set_fact:
+    cvlp_dt: "{{ cv_info.content_view.last_published[:-4] }}"
+
+- name: "Hours since publication"
+  ansible.builtin.set_fact:
+    hours_since_publication: "{{ (((current_dt | to_datetime) - (cvlp_dt | to_datetime)).total_seconds() / 3600) | int }}"
+
+- name: "Log the hours since last published"
   ansible.builtin.debug:
     var: hours_since_publication
 
 - name: "Determine if we have exceeded publication threshold hours"
   when:
     - cv.publication_threshold_hours is defined
-    - (hours_since_publication|float) > (cv.publication_threshold_hours|float)
+    - (hours_since_publication | float) > (cv.publication_threshold_hours | float)
   ansible.builtin.set_fact:
     exceeded_publication_threshold_hours: true
 
