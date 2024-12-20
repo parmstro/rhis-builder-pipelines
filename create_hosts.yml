@@ -22,4 +22,4 @@
 
     - name: "Build the specified hosts"
       ansible.builtin.include_role:
-        name: platform_build_node
+        name: platform_node_build
