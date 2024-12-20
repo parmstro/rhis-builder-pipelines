@@ -53,7 +53,7 @@
       ansible.builtin.set_fact:
         publish_content: false
 
-- name: "If we been asked to force publish this content view, ensure it it published"
+- name: "If we have been asked to force publish this content view, ensure it it published"
   when: ((cv.force_publish is defined and cv.force_publish) or force_publish_all)
   ansible.builtin.set_fact:
     publish_content: true

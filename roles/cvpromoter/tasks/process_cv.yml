@@ -10,7 +10,7 @@
     cvlpr_dt: ""
     publish_content: true
 
-- name: "If we been asked to force promote the content view, ensure it is promoted"
+- name: "If we have been asked to force promote the content view, ensure it is promoted"
   when: ((cv.force_promote is defined and cv.force_promote) or force_promote_all)
   ansible.builtin.set_fact:
     promote_content: true
