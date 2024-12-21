@@ -31,3 +31,19 @@
   loop: "{{ platform_hosts }}"
   loop_control:
     loop_var: host
+
+# This may cause a job to run on existing hosts that
+# were deleted and recreated. They should already be patched
+# to the latest during build. This is a minor issue.
+- name: "Ensure pre-existing systems are patched to latest"
+  when:
+    - host_exists
+  redhat.satellite.job_invocation:
+    username: "{{ satellite_username }}"
+    password: "{{ satellite_password }}"
+    server_url: "{{ satellite_url }}"
+    job_template: "Update packages by search query - Katello Ansible Default"
+    search_query: "name ^ ({{ host.fqdn }})"
+  loop: "{{ platform_hosts }}"
+  loop_control:
+    loop_var: host
