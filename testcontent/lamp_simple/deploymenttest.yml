@@ -41,6 +41,10 @@
           ansible.builtin.set_fact:
             test_value: retrieval_test.stdout
 
+        - name: "Log test_value"
+          ansible.builtin.debug:
+            var: test_value
+
         - name: "Get Home Page"
           ansible.builtin.uri:
             url: "http://{{ ansible_fqdn }}:{{ httpd_port }}/index.html"
