@@ -4,7 +4,7 @@
 
 - name: "Configure chrony for time servers"
   ansible.builtin.template:
-    src: "chrony.conf.j2 "
+    src: "chrony.conf.j2"
     dest: "/etc/chrony.conf"
     mode: "0644"
   notify: "Restart chronyd"
