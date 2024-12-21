@@ -21,7 +21,7 @@
     echo  "List of Databases: </BR>";
     Print  "</H2>";
     Print  "<H3>";
-        $link = mysqli_connect("{{ target_ip }}", "{{ hostvars[ansible_fqdn].msql_username }}", "{{ hostvars[ansible_fqdn].mysql_password }}") or die(mysqli_connect_error($link));
+        $link = mysqli_connect("{{ target_ip }}", "{{ hostvars[ansible_fqdn].mysql_username }}", "{{ hostvars[ansible_fqdn].mysql_password }}") or die(mysqli_connect_error($link));
         $res = mysqli_query($link, "SHOW DATABASES;");
         while ($row = mysqli_fetch_assoc($res)) {
                 echo $row['Database'] , "<BR/>";
