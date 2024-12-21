@@ -2,7 +2,8 @@
 # vmw_create_snapshot.yml
 
 - name: Create the snapshots for the list of hosts
-  hosts: all
+  hosts: controller
+  connection: local
   vars:
     snapshot_target_state: present
 
@@ -20,3 +21,6 @@
 
     - name: "Set the snapshot state"
       ansible.builtin.include_tasks: tasks/snapshot_action.yml
+      loop: "{{ host_list }}"
+      loop_control:
+        loop_var: host
