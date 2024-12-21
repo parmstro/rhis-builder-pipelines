@@ -8,21 +8,20 @@
     cvlp_dt: ""
     publish_content: true
 
+- name: "Get content view info: {{ cv.name }}"
+  redhat.satellite.content_view_info:
+    username: "{{ satellite_username }}"
+    password: "{{ satellite_password }}"
+    server_url: "{{ satellite_url }}"
+    organization: "{{ satellite_organization }}"
+    validate_certs: "{{ satellite_validate_certs }}"
+    name: "{{ cv.name }}"
+  register: cv_info
+  changed_when: false
+
 - name: "Check if we need to determine last publication datetime"
   when: cv.publication_threshold_hours is defined
   block:
-
-    - name: "Get content view info: {{ cv.name }}"
-      redhat.satellite.content_view_info:
-        username: "{{ satellite_username }}"
-        password: "{{ satellite_password }}"
-        server_url: "{{ satellite_url }}"
-        organization: "{{ satellite_organization }}"
-        validate_certs: "{{ satellite_validate_certs }}"
-        name: "{{ cv.name }}"
-      register: cv_info
-      changed_when: false
-
     - name: "Determine the datetime"
       ansible.builtin.set_fact:
         current_dt: "{{ now(utc=true, fmt='%Y-%m-%d %H:%M:%S') }}"
