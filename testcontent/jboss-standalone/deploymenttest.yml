@@ -38,7 +38,7 @@
           email: "{{ bobs_email }}"
           phoneNumber: "5555551212"
         headers:
-          cookies: "{{ result.set_cookie }}"
+          cookies: "{{ get_result.set_cookie }}"
         status_code: 200
       register: post_result
 
