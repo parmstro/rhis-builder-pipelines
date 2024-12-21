@@ -60,16 +60,31 @@
 
 - name: "Publishing content view - {{ cv.name }}"
   when: publish_content
-  redhat.satellite.content_view_version:
-    username: "{{ satellite_username }}"
-    password: "{{ satellite_password }}"
-    server_url: "{{ satellite_url }}"
-    organization: "{{ satellite_organization }}"
-    validate_certs: "{{ satellite_validate_certs }}"
-    content_view: "{{ cv.name }}"
-    description: "{{ description | default(omit) }}"
-    version: "{{ cv.version | default(omit) }}" # default is a new version
-    lifecycle_environments: "{{ cv.environments | default(omit) }}" # underlying default is publish new version to the library
-    state: "{{ cv.state | default(omit) }}" # underlying default is present
-  async: "{{ cv_publish_timeout | default(14400) }}"
-  poll: "{{ cv_publish_retry_interval | default(15) }}"
+  block:
+    - name: "Update the Errata by date filter"
+      when: not cv_info.content_view.composite
+      redhat.satellite.content_view_filter_rule:
+        username: "{{ satellite_username }}"
+        password: "{{ satellite_password }}"
+        server_url: "{{ satellite_url }}"
+        organization: "{{ satellite_organization }}"
+        content_view: "{{ cv.name }}"
+        content_view_filter: "{{ cv.date_filter_name }}"
+        date_type: "updated" # default
+        end_date: "{{ filter_enddate | default(ansible_date_time.date) }}"
+        validate_certs: "{{ satellite_validate_certs }}"
+
+    - name: "Publish the content view"
+      redhat.satellite.content_view_version:
+        username: "{{ satellite_username }}"
+        password: "{{ satellite_password }}"
+        server_url: "{{ satellite_url }}"
+        organization: "{{ satellite_organization }}"
+        validate_certs: "{{ satellite_validate_certs }}"
+        content_view: "{{ cv.name }}"
+        description: "{{ description | default(omit) }}"
+        version: "{{ cv.version | default(omit) }}" # default is a new version
+        lifecycle_environments: "{{ cv.environments | default(omit) }}" # underlying default is publish new version to the library
+        state: "{{ cv.state | default(omit) }}" # underlying default is present
+      async: "{{ cv_publish_timeout | default(14400) }}"
+      poll: "{{ cv_publish_retry_interval | default(15) }}"
