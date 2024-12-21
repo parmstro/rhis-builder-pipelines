@@ -51,11 +51,11 @@
 
         - name: "Log the GET result"
           ansible.builtin.debug:
-            var: home_result
+            var: get_home_result
 
         - name: "Assert home page content current."
           ansible.builtin.assert:
-            that: home_result.content is search(test_value.stdout)
+            that: get_home_result.content is search(test_value.stdout)
             fail_msg: "Configuration Failed - could not find required data in home page content"
 
         - name: "Get About Page"
@@ -72,7 +72,7 @@
 
         - name: "Assert about page content is up to date."
           ansible.builtin.assert:
-            that: about_result.content is search(test_value.stdout)
+            that: get_about_result.content is search(test_value.stdout)
             fail_msg: "Configuration Failed - could not find required data in about page content"
 
         - name: "Test Complete."
