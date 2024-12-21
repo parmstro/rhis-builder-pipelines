@@ -31,6 +31,7 @@ wp_blog_public: false
 # This is used for the nginx server configuration, but access to the
 # WordPress site is not restricted by a named host.
 nginx_port: 80
+nginx_port_protocol: "tcp"
 server_hostname: "{{ ansible_fqdn }}"
 acm_nginx_conf_file: "acm.conf"
 
