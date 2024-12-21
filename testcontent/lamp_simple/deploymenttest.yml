@@ -39,7 +39,7 @@
 
         - name: "Store test_value"
           ansible.builtin.set_fact:
-            test_value: retrieval_test.stdout
+            test_value: "{{ retrieval_test.stdout }}"
 
         - name: "Log test_value"
           ansible.builtin.debug:
