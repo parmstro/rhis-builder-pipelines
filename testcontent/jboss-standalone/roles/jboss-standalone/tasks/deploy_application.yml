@@ -32,7 +32,7 @@
     cmd: "mvn clean install wildfly:deploy"
   register: maven_install_result
   changed_when: maven_install_result.rc == 0
-  notify: "Restar jboss"
+  notify: "Restart jboss"
 
 - name: "Ensure that firewalld is installed"
   ansible.builtin.dnf:
