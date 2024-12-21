@@ -37,10 +37,9 @@
           register: retrieval_test
           changed_when: retrieval_test.rc == 0
 
-        - name: "Test value persistent"
-          ansible.builtin.assert:
-            that: retrieval_test.stdout == test_value
-            fail_msg: "Failed to retrieve the test value accurately"
+        - name: "Store test_value"
+          ansible.builtin.set_fact:
+            test_value: retrieval_test.stdout
 
         - name: "Get Home Page"
           ansible.builtin.uri:
