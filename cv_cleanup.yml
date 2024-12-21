@@ -1,10 +1,23 @@
 ---
 # This play cleans up content views and leaves only a configured amount remaining
 - name: Publish the configured Content Views and Composite Content Views
-  hosts: all
+  hosts: controller
   connection: local
+
+  pre_tasks:
+    - name: "Load the vault variables"
+      when: vault_path is defined
+      ansible.builtin.include_vars:
+        file: "{{ vault_path }}"
+
+    - name: "Load the other variables"
+      when: vars_path is defined
+      ansible.builtin.include_vars:
+        file: "{{ vars_path }}"
+
   roles:
     - role: redhat.satellite.content_view_version_cleanup
       vars:
         satellite_content_view_version_cleanup_keep: "{{ num_cvs_to_keep }}" # noqa var-naming[no-role-prefix]
-        search: "{{ cv_search }}"                                            # noqa var-naming[no-role-prefix]
+        satellite_content_view_version_cleanup_search: "{{ cv_search }}" # noqa var-naming[no-role-prefix]
+        satellite_server_url: "{{ satellite_url }}"  # noqa var-naming[no-role-prefix]
