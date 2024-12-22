@@ -1,7 +1,7 @@
 ---
 # Perform the power action
 # one of powered-off, powered-on, reboot-guest, restarted, shutdown-guest, suspended, present (default == powered-on)
-- name: "Set initial started"
+- name: "Set environment. Target power state: {{ power_action_target_state }}"
   ansible.builtin.set_fact:
     power_action_force: false
 
@@ -11,7 +11,7 @@
     hostname: "{{ vcenter_hostname }}"
     username: "{{ vcenter_username }}"
     password: "{{ vcenter_password }}"
-    name: "{{ item.name }}"
+    name: "{{ host.name }}"
     validate_certs: "{{ vmware_validate_certs }}"
   register: vm_folder
 
@@ -20,7 +20,7 @@
   ansible.builtin.set_fact:
     power_action_force: true
 
-- name: "Power Action is setting power state: {{ power_action_target_state }}"
+- name: "Power Action is setting power state: {{ power_action_target_state }} for host: {{ host.name }}" # noqa: name[template]
   connection: local
   community.vmware.vmware_guest_powerstate:
     hostname: "{{ vcenter_hostname }}"
@@ -28,7 +28,7 @@
     password: "{{ vcenter_password }}"
     datacenter: "{{ datacenter_name }}"
     folder: "{{ datacenter_folder }}"
-    name: "{{ item.name }}"
+    name: "{{ host.name }}"
     state: "{{ power_action_target_state }}"
     force: "{{ power_action_force }}"
     validate_certs: "{{ vmware_validate_certs }}"
