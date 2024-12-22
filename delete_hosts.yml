@@ -11,4 +11,4 @@
       ansible.builtin.include_tasks: tasks/delete_host.yml
       loop: "{{ host_list }}"
       loop_control:
-        loop_var: host
+        loop_var: delete_host
