@@ -21,6 +21,6 @@
 
 - name: "Extract archive"
   ansible.builtin.unarchive:
-    src: "/bin/tar xvf wordpress-{{ wp_version }}.tar.gz"
+    src: "wordpress-{{ wp_version }}.tar.gz"
     dest: "/srv/"
     creates: "/srv/wordpress"
