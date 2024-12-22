@@ -24,3 +24,4 @@
     src: "wordpress-{{ wp_version }}.tar.gz"
     dest: "/srv/"
     creates: "/srv/wordpress"
+    remote_src: true
