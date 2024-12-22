@@ -2,7 +2,8 @@
 # vmw_power_on_vm.yml
 
 - name: Power on the list of vmware hosts
-  hosts: all
+  hosts: controller
+  connection: local
   vars:
     power_action_target_state: "powered-on"
 
@@ -19,4 +20,7 @@
         file: "{{ vars_path }}"
 
     - name: "Set the power state"
-      ansible.builtin.include_tasks: tasks/power_action.yml
+      ansible.builtin.include_tasks: "tasks/power_action.yml"
+      loop: "{{ host_list }}"
+      loop_control:
+        loop_var: host
