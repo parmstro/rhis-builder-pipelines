@@ -2,11 +2,15 @@
 
 - name: "Disable default pool"
   ansible.builtin.command: "mv /etc/php-fpm.d/www.conf /etc/php-fpm.d/www.disabled creates=/etc/php-fpm.d/www.disabled"
-  notify: "Restart php-fpm"
 
 - name: "Ensure php-fpm configuration"
   ansible.builtin.template:
     src: "wordpress.conf"
     dest: "/etc/php-fpm.d/"
     mode: "0644"
-  notify: "Restart php-fpm"
+
+- name: "Restart php-fpm"
+  ansible.builtin.service:
+    name: php-fpm
+    state: restarted
+    enabled: true
