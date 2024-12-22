@@ -5,7 +5,7 @@ epel8_streams_repo_name: "Default_Organization_EPEL8_EPEL8_Streams"
 
 epel7_rpms_repo_name: "Default_Organization_EPEL7_EPEL7"
 
-wp_version: "6.3.1"
+wp_version: "6.7.1"
 wp_url: "https://en-ca.wordpress.org/wordpress-{{ wp_version }}-en_CA.tar.gz"
 wp_checksum: "sha1:https://en-ca.wordpress.org/wordpress-{{ wp_version }}-en_CA.tar.gz.sha1"
 
