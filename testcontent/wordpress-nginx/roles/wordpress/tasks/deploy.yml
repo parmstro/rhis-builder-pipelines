@@ -93,5 +93,5 @@
 - name: "Ensure php-fpm is enabled and started"
   ansible.builtin.service:
     name: "php-fpm"
-    state: "started"
+    state: "restarted"
     enabled: true
