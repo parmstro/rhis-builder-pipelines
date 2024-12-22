@@ -16,7 +16,7 @@
   register: vm_folder
 
 - name: "Set state"
-  when: target_state == "powered-on"
+  when: power_action_target_state == "powered-on"
   ansible.builtin.set_fact:
     power_action_force: true
 
