@@ -1,0 +1,21 @@
+---
+
+- name: "Update nginx configuration for wordpress"
+  ansible.builtin.template:
+    src: "default.conf"
+    dest: "/etc/nginx/conf.d/{{ acm_nginx_conf_file }}"
+    mode: "0644"
+  notify: "Restart nginx"
+
+- name: "Update the main nginx config"
+  ansible.builtin.template:
+    src: nginx.conf
+    dest: "/etc/nginx/nginx.conf"
+    mode: "0644"
+  notify: "Restart nginx"
+
+- name: "Enable and start the web server"
+  ansible.builtin.service:
+    name: "nginx"
+    state: "started"
+    enabled: true

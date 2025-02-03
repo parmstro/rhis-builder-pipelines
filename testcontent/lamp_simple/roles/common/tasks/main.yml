@@ -1,0 +1,10 @@
+---
+
+# This playbook contains common plays that will be run on all nodes.
+
+- name: "Configure chrony for time servers"
+  ansible.builtin.template:
+    src: "chrony.conf.j2"
+    dest: "/etc/chrony.conf"
+    mode: "0644"
+  notify: "Restart chronyd"

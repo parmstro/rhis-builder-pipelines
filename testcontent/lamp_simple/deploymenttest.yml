@@ -1,0 +1,84 @@
+---
+
+# This play is a simple test of the LAMP Stack deployment
+# This currently does not test grafana - this will fail with install_grafana: true
+
+- name: LAMP deployment test
+  hosts: all
+
+  tasks:
+    - name: "Run Tests"
+      when: not install_grafana
+      block:
+        - name: "GET index.php"
+          ansible.builtin.uri:
+            url: "http://{{ ansible_fqdn }}:{{ httpd_port }}/index.php"
+            method: GET
+            status_code: 200
+            return_content: true
+          register: get_php_result
+
+        - name: "Fail if list of databases does not include nation"
+          ansible.builtin.assert:
+            that: get_php_result.content is search("nation")
+            fail_msg: "Configuration Failed - could not find database 'nation'"
+
+        - name: "Fail if search for database result cant find Canada entry"
+          ansible.builtin.assert:
+            that: get_php_result.content is search("Canada")
+            fail_msg: "Failed to find expected record - could not find 'Canada' entry"
+
+        - name: "Database and PHP test result"
+          ansible.builtin.debug:
+            msg: "Success"
+
+        - name: "Retrieve the test value"
+          ansible.builtin.command: "cat /root/testvalue.txt"
+          register: retrieval_test
+          changed_when: retrieval_test.rc == 0
+
+        - name: "Store test_value"
+          ansible.builtin.set_fact:
+            test_value: "{{ retrieval_test.stdout }}"
+
+        - name: "Log test_value"
+          ansible.builtin.debug:
+            var: test_value
+
+        - name: "Get Home Page"
+          ansible.builtin.uri:
+            url: "http://{{ ansible_fqdn }}:{{ httpd_port }}/index.html"
+            method: GET
+            status_code: 200
+            return_content: true
+          register: get_home_result
+
+        - name: "Log the GET result"
+          ansible.builtin.debug:
+            var: get_home_result
+
+        - name: "Assert home page content current."
+          ansible.builtin.assert:
+            that: get_home_result.content is search(test_value)
+            fail_msg: "Configuration Failed - could not find required data in home page content"
+
+        - name: "Get About Page"
+          ansible.builtin.uri:
+            url: "http://{{ ansible_fqdn }}:{{ httpd_port }}/about.html"
+            method: GET
+            status_code: 200
+            return_content: true
+          register: get_about_result
+
+        - name: "Log the About GET result"
+          ansible.builtin.debug:
+            var: get_about_result
+
+        - name: "Assert about page content is up to date."
+          ansible.builtin.assert:
+            that: get_about_result.content is search(test_value)
+            fail_msg: "Configuration Failed - could not find required data in about page content"
+
+        - name: "Test Complete."
+          ansible.builtin.debug:
+            msg: "Success!"

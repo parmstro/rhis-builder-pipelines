@@ -1,0 +1,7 @@
+---
+# Simple Handler
+
+- name: "Restart jboss"
+  ansible.builtin.service:
+    name: "eap7-standalone"
+    state: "restarted"

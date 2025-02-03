@@ -1,0 +1,18 @@
+---
+# This role expects a list of content views as input. See sample variables in vars/all.yml
+# Please remember that CV and CCV promotion can be long running tasks depending on version and configuration of Satellite
+# TODO: implement skip if date is the same and force to publish regardless
+
+- name: "Process Content View"
+  ansible.builtin.include_tasks: "process_cv.yml"
+  loop: "{{ content_views }}"
+  loop_control:
+    loop_var: cv
+
+# Process the composites after all the content views finish
+# This ensures consistency and single publication
+- name: "Process Composite Content View {{ cv.name }}"
+  ansible.builtin.include_tasks: "process_cv.yml"
+  loop: "{{ composite_content_views }}"
+  loop_control:
+    loop_var: cv

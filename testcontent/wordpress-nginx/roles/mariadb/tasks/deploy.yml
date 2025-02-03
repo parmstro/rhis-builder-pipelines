@@ -1,0 +1,15 @@
+---
+
+- name: "Deploy the Mysql configuration file"
+  ansible.builtin.template:
+    src: "my.cnf.j2"
+    dest: "/etc/my.cnf"
+    mode: "0644"
+  notify:
+    - "Restart mariadb"
+
+- name: "Ensure that MariaDB Service is enabled and running"
+  ansible.builtin.service:
+    name: "mariadb"
+    state: "started"
+    enabled: true

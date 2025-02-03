@@ -1,0 +1,12 @@
+---
+
+mysql_service: "mysqld"
+mysql_port: 3306
+mysql_dbname: "{{ mysql_dbname_vault }}"
+mysql_username: "{{ mysql_username_vault }}"
+mysql_password: "{{ mysql_password_vault }}"
+mysql_user_priv: "{{ mysql_user_priv_vault }}"
+mysql_sql_log_bin: false
+
+install_grafana: false
+grafana_port: 3000

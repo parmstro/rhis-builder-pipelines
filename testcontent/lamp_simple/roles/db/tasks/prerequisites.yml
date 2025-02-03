@@ -1,0 +1,55 @@
+---
+
+- name: "Install MariaDB AppStream"
+  ansible.builtin.dnf:
+    name:
+      - "@mariadb:10.3/server"
+      - "@python36:3.6/common"
+    state: "present"
+
+- name: "Ensure python3-PyMySQL is really, really there. Because apparently its not"
+  ansible.builtin.command: "pip3 install PyMySQL"
+  register: pip_result
+  changed_when: pip_result.rc == 0
+
+- name: Configure SELinux to allow mysql port {{ mysql_port }}
+  community.general.seport:
+    ports: "{{ mysql_port }}"
+    proto: "tcp"
+    setype: "mysqld_port_t"
+    state: "present"
+
+- name: "Ensure the proper log directory"
+  ansible.builtin.file:
+    path: "/var/log/mysqld/"
+    state: "directory"
+    owner: "mysql"
+    group: "mysql"
+    mode: "0644"
+
+- name: "Ensure the proper pid directory"
+  ansible.builtin.file:
+    path: "/var/run/mysqld/"
+    state: "directory"
+    owner: "mysql"
+    group: "mysql"
+    mode: "0644"
+
+- name: "Ensure MariaDB Service starts at boot"
+  ansible.builtin.service:
+    name: "mariadb"
+    state: "started"
+    enabled: true
+
+- name: "Ensure firewalld running"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "started"
+    enabled: true
+
+- name: "Add firewall rules"
+  ansible.posix.firewalld:
+    port: "{{ mysql_port }}/tcp"
+    permanent: true
+    immediate: true
+    state: "enabled"

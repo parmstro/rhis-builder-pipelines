@@ -1,0 +1,89 @@
+---
+# Called for each content view in content_views
+- name: "Set up the environment - assume we want to publish"
+  ansible.builtin.set_fact:
+    exceeded_publication_threshold_hours: false
+    hours_since_publication: 0
+    current_dt: ""
+    cvlp_dt: ""
+    publish_content: true
+
+- name: "Get content view info: {{ cv.name }}"
+  redhat.satellite.content_view_info:
+    username: "{{ satellite_username }}"
+    password: "{{ satellite_password }}"
+    server_url: "{{ satellite_url }}"
+    organization: "{{ satellite_organization }}"
+    validate_certs: "{{ satellite_validate_certs }}"
+    name: "{{ cv.name }}"
+  register: cv_info
+  changed_when: false
+
+- name: "Check if we need to determine last publication datetime"
+  when: cv.publication_threshold_hours is defined
+  block:
+    - name: "Determine the datetime"
+      ansible.builtin.set_fact:
+        current_dt: "{{ now(utc=true, fmt='%Y-%m-%d %H:%M:%S') }}"
+
+    - name: "Determine last published datetime"
+      ansible.builtin.set_fact:
+        cvlp_dt: "{{ cv_info.content_view.last_published[:-4] }}"
+
+    - name: "Hours since publication"
+      ansible.builtin.set_fact:
+        hours_since_publication: "{{ (((current_dt | to_datetime) - (cvlp_dt | to_datetime)).total_seconds() / 3600) | int }}"
+
+    - name: "Log the hours since last published: {{ cv.name }}"
+      ansible.builtin.debug:
+        var: hours_since_publication
+
+    - name: "Determine if we have exceeded publication threshold hours"
+      when: ((hours_since_publication | float) > (cv.publication_threshold_hours | float))
+      ansible.builtin.set_fact:
+        exceeded_publication_threshold_hours: true
+
+    - name: "Log whether we have exceeded publication threshold hours"
+      ansible.builtin.debug:
+        var: exceeded_publication_threshold_hours
+
+    - name: "Turning publishing off because publication conditions have not been met"
+      when: ((not exceeded_publication_threshold_hours) or (skip_publish_all))
+      ansible.builtin.set_fact:
+        publish_content: false
+
+- name: "If force publish has been requested, ensure content view is published"
+  when: ((cv.force_publish is defined and cv.force_publish) or force_publish_all)
+  ansible.builtin.set_fact:
+    publish_content: true
+
+- name: "Publishing content view - {{ cv.name }}"
+  when: publish_content
+  block:
+    - name: "Update the errata by date filter"
+      when: not cv_info.content_view.composite
+      redhat.satellite.content_view_filter_rule:
+        username: "{{ satellite_username }}"
+        password: "{{ satellite_password }}"
+        server_url: "{{ satellite_url }}"
+        organization: "{{ satellite_organization }}"
+        content_view: "{{ cv.name }}"
+        content_view_filter: "{{ cv.date_filter_name }}"
+        date_type: "updated" # default
+        end_date: "{{ filter_enddate | default(ansible_date_time.date) }}"
+        validate_certs: "{{ satellite_validate_certs }}"
+
+    - name: "Publish the content view: {{ cv.name }}"
+      redhat.satellite.content_view_version:
+        username: "{{ satellite_username }}"
+        password: "{{ satellite_password }}"
+        server_url: "{{ satellite_url }}"
+        organization: "{{ satellite_organization }}"
+        validate_certs: "{{ satellite_validate_certs }}"
+        content_view: "{{ cv.name }}"
+        description: "{{ description | default(omit) }}"
+        version: "{{ cv.version | default(omit) }}" # default is a new version
+        lifecycle_environments: "{{ cv.environments | default(omit) }}" # underlying default is publish new version to the library
+        state: "{{ cv.state | default(omit) }}" # underlying default is present
+      async: "{{ cv_publish_timeout | default(14400) }}"
+      poll: "{{ cv_publish_retry_interval | default(15) }}"

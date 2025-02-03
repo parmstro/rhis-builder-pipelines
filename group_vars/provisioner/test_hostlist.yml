@@ -1,0 +1,53 @@
+---
+# A valid mac is required when using bare metal as compute resource
+# this can come from a query of satellites available discovered hosts or
+# be a known value - for all other compute resources, the mac is assigned by
+# the compute resource
+discovered_hosts_resource: "discovered_hosts"
+discovered_hosts_search: "disk_count = 1 and memory > 32000"
+discovered_host_req_nic_count: 1  # we use > below so does not include lo
+host_build_comment: "Created by ansible for content test"
+enable_debug_logging: false
+deploy: true
+
+# NOTE: Baremetal requires a valid MAC for a discovered host
+# Supplying one here will specify a particular discovered host
+# providing "ff:ff:ff:ff:ff:ff" will use search criteria
+# you can alternately provide dhostname == discovered host name field
+platform_hosts:
+  - name: "pucci"
+    fqdn: "pucci.parmstrong.ca"
+    delete_host: false
+    organization: "Default Organization"
+    location: "Default Location"
+    hostgroup: "hg_x86_64_rhel8_metal"
+    kickstart_repository: "Red Hat Enterprise Linux 8 for x86_64 - BaseOS Kickstart 8.10"
+    compute_resource: "baremetal"
+    serial: "MySerialNumber"
+    rack: "MyRackId"
+    mac: "ff:ff:ff:ff:ff:ff"
+    ip: "192.168.252.78"
+    trunk_mac1: "7C:C2:55:6B:49:DA"
+    trunk_mac2: "7C:C2:55:6B:49:D4"
+    trunk_ip: "10.161.40.201"
+    bmc_mac: "7C:C2:55:E2:CD:FC"
+
+# platform_hosts:
+#   - fqdn: "testjboss2.parmstrong.ca"
+#     hostgroup: "hg_x86_64_rhel8_vm/soe_jboss"
+#     kickstart_repository: "Red Hat Enterprise Linux 8 for x86_64 - BaseOS Kickstart 8.10"
+#     compute_resource: "vcenter.parmstrong.ca"
+#     compute_profile: "2-Medium"
+#     mac: "00:50:56:ff:ff:ff"
+#   - fqdn: "testlamp2.parmstrong.ca"
+#     hostgroup: "hg_x86_64_rhel8_vm/soe_lamp"
+#     kickstart_repository: "Red Hat Enterprise Linux 8 for x86_64 - BaseOS Kickstart 8.10"
+#     compute_resource: "vcenter.parmstrong.ca"
+#     compute_profile: "2-Medium"
+#     mac: "00:50:56:ff:ff:ff"
+#   - fqdn: "testwordpress2.parmstrong.ca"
+#     hostgroup: "hg_x86_64_rhel8_vm/soe_wordpress"
+#     kickstart_repository: "Red Hat Enterprise Linux 8 for x86_64 - BaseOS Kickstart 8.10"
+#     compute_resource: "vcenter.parmstrong.ca"
+#     compute_profile: "2-Medium"
+#     mac: "00:50:56:ff:ff:ff"

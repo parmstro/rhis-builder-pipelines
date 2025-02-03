@@ -1,0 +1,10 @@
+---
+# Deploy and configure wordpress
+
+- name: "Ensure the prerequisites"
+  ansible.builtin.include_tasks:
+    file: "prerequisites.yml"
+
+- name: "Deploy the configuration"
+  ansible.builtin.include_tasks:
+    file: "deploy.yml"

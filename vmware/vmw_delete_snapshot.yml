@@ -1,0 +1,26 @@
+---
+# vmw_delete_snapshot.yml
+
+- name: Delete the snapshots for the list of hosts
+  hosts: controller
+  connection: local
+  vars:
+    snapshot_target_state: "absent"
+
+  tasks:
+
+    - name: "Load the vault variables"
+      when: vault_path is defined
+      ansible.builtin.include_vars:
+        file: "{{ vault_path }}"
+
+    - name: "Load the other variables"
+      when: vars_path is defined
+      ansible.builtin.include_vars:
+        file: "{{ vars_path }}"
+
+    - name: "Set the snapshot state"
+      ansible.builtin.include_tasks: tasks/snapshot_action.yml
+      loop: "{{ host_list }}"
+      loop_control:
+        loop_var: host

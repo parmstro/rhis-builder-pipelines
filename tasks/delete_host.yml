@@ -1,0 +1,19 @@
+---
+# call with a host list loop_var delete_host
+# runs with connection local to the controller/provisioner
+- name: "Delete the host: {{ delete_host.name }}"
+  redhat.satellite.host:
+    username: "{{ satellite_username }}"
+    password: "{{ satellite_password }}"
+    server_url: "{{ satellite_url }}"
+    organization: "{{ satellite_organization }}"
+    location: "{{ satellite_location }}"
+    name: "{{ delete_host.name }}"
+    validate_certs: "{{ satellite_validate_certs }}"
+    state: absent
+  register: delete_host_result
+
+- name: "Log result"
+  when: enable_debug_logging
+  ansible.builtin.debug:
+    var: delete_host_result

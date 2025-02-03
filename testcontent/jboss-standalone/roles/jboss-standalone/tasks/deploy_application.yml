@@ -1,0 +1,58 @@
+---
+
+- name: "Configure the JBoss EAP 7 Standalone Service"
+  when: jboss_deploy_standalone
+  ansible.builtin.service:
+    name: eap7-standalone.service
+    enabled: true
+    state: started
+
+# clone the jboss-developer github repo for sample apps
+- name: "Clone the jboss-developer github repo for sample apps"
+  ansible.builtin.git:
+    repo: "{{ sample_app_git_repo }}"
+    dest: "{{ sample_app_root }}"
+    version: "{{ sample_app_git_version }}"
+
+- name: Deploy the standalone configuration template
+  ansible.builtin.template:
+    src: eap7-standalone.conf.j2
+    dest: "{{ jboss_standalone_conf_path }}"
+    mode: "0644"
+
+- name: Deploy the standalone xml
+  ansible.builtin.template:
+    src: standalone.xml.j2
+    dest: "{{ jboss_config_dir }}/standalone.xml"
+    mode: "0644"
+
+- name: "Build and deploy the sample app"
+  ansible.builtin.command:
+    chdir: "{{ sample_app_root }}/{{ sample_app_dir }}"
+    cmd: "mvn clean install wildfly:deploy"
+  register: maven_install_result
+  changed_when: maven_install_result.rc == 0
+  notify: "Restart jboss"
+
+- name: "Ensure that firewalld is installed"
+  ansible.builtin.dnf:
+    name: "firewalld"
+    state: "present"
+
+- name: "Ensure that firewalld is started"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "started"
+
+- name: "Ensure port access"
+  ansible.posix.firewalld:
+    port: "{{ port_protocol }}"
+    zone: "public"
+    state: enabled
+    immediate: true
+    permanent: true
+  loop:
+    - "{{ http_port }}/tcp"
+    - "{{ https_port }}/tcp"
+  loop_control:
+    loop_var: port_protocol

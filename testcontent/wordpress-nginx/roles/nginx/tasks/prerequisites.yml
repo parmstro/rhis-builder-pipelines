@@ -1,0 +1,20 @@
+---
+
+- name: "Install nginx Appstream for RHEL9"
+  when: ansible_distribution_major_version == "9"
+  ansible.builtin.dnf:
+    name: "nginx"
+    state: "present"
+
+- name: "Install nginx AppStreams"
+  when: ansible_distribution_major_version == "8"
+  ansible.builtin.dnf:
+    name: "@nginx:1.14/common"
+    state: "present"
+
+- name: "Add firewalld rule for nginx"
+  ansible.posix.firewalld:
+    port: "{{ nginx_port }}/{{ nginx_port_protocol }}"
+    permanent: true
+    immediate: true
+    state: "enabled"

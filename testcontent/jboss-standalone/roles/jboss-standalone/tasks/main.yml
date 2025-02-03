@@ -1,0 +1,16 @@
+---
+# simplified installation based on EAP rpm installation
+# support RHEL8 with RPM install
+# requires proper Red Hat Subscriptions to be attached
+# this is a repo based installation for JBoss EAP to run as a service
+
+# Prerequisites
+- name: "Install Prerequisites"
+  ansible.builtin.include_tasks: "prerequisites.yml"
+
+# Application
+- name: "Deploy Application"
+  ansible.builtin.include_tasks: "deploy_application.yml"
+
+# Cleanup
+# None

@@ -1,0 +1,6 @@
+---
+#
+mysql_dbname_vault: "foodb"          # not-secret
+mysql_username_vault: "mysqluser"    # not-secret
+mysql_password_vault: "s33kr8"       # not-secret
+mysql_user_priv_vault: "*.*:ALL"     # not-secret
