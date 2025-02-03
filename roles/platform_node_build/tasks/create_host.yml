@@ -88,6 +88,7 @@
     compute_resource: "{{ target_compute_resource | default(omit) }}"
     compute_profile: "{{ host.compute_profile | default(omit) }}"
     mac: "{{ target_mac }}"
+    ip: "{{ host.ip | default(omit) }}"
     build: true
     state: present
     validate_certs: "{{ satellite_validate_certs }}"
