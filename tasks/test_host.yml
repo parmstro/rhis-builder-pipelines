@@ -1,0 +1,12 @@
+---
+- name: "Can we resolve the host?"
+  ansible.builtin.assert:
+    that: "{{ host.fqdn is ansible.utils.resolvable }}"
+
+- name: "Can we ssh to host?"
+  ansible.builtin.wait_for:
+    timeout: 60
+    sleep: 10
+    port: 22
+    host: "{{ host.fqdn }}"
+    search_regex: OpenSSH

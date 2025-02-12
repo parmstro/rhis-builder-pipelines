@@ -1,0 +1,5 @@
+- name: "Are the hosts accessible"
+  ansible.builtin.include_tasks: "test_host.yml"
+  loop: "{{ platform_hosts }}"
+  loop_control:
+    loop_var: host

@@ -1,0 +1,89 @@
+---
+
+- name: "Configuring interface {{ iface.identifier }} for {{ host.fqdn }} with the following parameters" # noqa name[template]
+  ansible.builtin.debug:
+    var: iface
+
+- name: "Underlying port1 for {{ iface.identifier }}"
+  ansible.builtin.debug:
+    var: iface.attached_devices[0]
+
+- name: "Underlying port1 for {{ iface.identifier }}"
+  ansible.builtin.debug:
+    var: iface.attached_devices[1]
+
+- name: "Create the bond {{ host.fqdn }}"
+  ansible.builtin.include_role:
+    name: rhel-system-roles.network
+    apply:
+      delegate_to: "{{ host.fqdn }}"
+  vars:
+    network_connections:
+      # Bond profile
+      - name: "{{ iface.identifier }}"
+        type: "{{ iface.type }}"
+        interface_name: "{{ iface.identifier }}"
+        ip:
+          dhcp4: "false"
+          auto6: "false"
+        bond:
+          mode: "{{ iface.mode }}"
+          miimon: 100
+          xmit_hash_policy: "layer3+4"
+        state: up
+
+      # Port profile for the 1st Ethernet device
+      - name: "{{ iface.identifier }}-port1"
+        interface_name: "{{ iface.attached_devices[0] }}"
+        type: ethernet
+        controller: "{{ iface.identifier }}"
+        state: up
+
+      # Port profile for the 2nd Ethernet device
+      - name: "{{ iface.identifier }}-port2"
+        interface_name: "{{ iface.attached_devices[1] }}"
+        type: ethernet
+        controller: "{{ iface.identifier }}"
+        state: up
+
+- name: "Configure the address for bond on {{ host.fqdn }}"
+  when:
+    - iface.tag is undefined
+    - iface.ip is defined
+  ansible.builtin.include_role:
+    name: rhel-system-roles.network
+    apply:
+      delegate_to: "{{ host.fqdn }}"
+  vars:
+    network_connections:
+      - name: "{{ iface.identifier }}"
+        type: "{{ iface.type }}"
+        interface_name: "{{ iface.identifier }}"
+        ip:
+          dhcp4: false
+          auto6: false
+          address:
+            - "{{ iface.ip }}/{{ _default_bond_subnet_prefix }}"
+        state: up
+
+- name: "Configure the vlan on the bond for {{ host.fqdn }}"
+  when:
+    - iface.tag is defined
+  ansible.builtin.include_role:
+    name: rhel-system-roles.network
+    apply:
+      delegate_to: "{{ host.fqdn }}"
+  vars:
+    network_connections:
+      - name: "{{ iface.identifier }}.{{ iface.tag }}"
+        type: "vlan"
+        vlan:
+          id: "{{ iface.tag }}"
+        interface_name: "{{ iface.identifier }}.{{ iface.tag }}"
+        ip:
+          dhcp4: false
+          auto6: false
+          address:
+            - "{{ iface.ip }}/{{ _default_bond_subnet_prefix }}"
+        parent: "{{ iface.identifier }}"
+        state: up

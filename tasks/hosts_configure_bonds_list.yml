@@ -1,0 +1,7 @@
+---
+
+- name: "Configure the bond interfaces for the platform hosts"
+  ansible.builtin.include_tasks: "host_configure_bonds.yml"
+  loop: "{{ platform_hosts }}"
+  loop_control:
+    loop_var: host
