@@ -1,0 +1,6 @@
+- name: "Ping bond0 gateway for {{ host.fqdn }}"
+  ansible.builtin.command:
+    cmd: 'ping -c3 {{ _default_bond_default_gateway }}'  # noqa yaml[line-length]
+  register: bond_ping
+  changed_when: bond_ping.rc == 0
+  failed_when: "'100% packet loss' in bond_ping.stdout"

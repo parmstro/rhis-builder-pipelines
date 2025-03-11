@@ -1,0 +1,7 @@
+---
+
+- name: "Configure the bonded interfaces for host: {{ host.fqdn }}"
+  ansible.builtin.include_tasks: "host_configure_bond_iface.yml"
+  loop: "{{ host.interfaces_attributes | selectattr('type', 'match', 'bond') }}"
+  loop_control:
+    loop_var: iface

@@ -1,0 +1,63 @@
+---
+
+- name: "Configuring interface {{ iface.identifier }} for {{ host.fqdn }} with the following parameters" # noqa name[template]
+  ansible.builtin.debug:
+    var: iface
+
+- name: "Underlying port1 for {{ iface.identifier }}"
+  ansible.builtin.debug:
+    var: iface.attached_devices[0]
+
+- name: "Underlying port1 for {{ iface.identifier }}"
+  ansible.builtin.debug:
+    var: iface.attached_devices[1]
+
+- name: "Create the bond interface for {{ host.fqdn }}"
+  ansible.builtin.command:
+    cmd: 'nmcli connection add type bond con-name {{ iface.identifier }} ifname {{ iface.identifier }} bond.options "mode=802.3ad,miimon=100,xmit_hash_policy=layer3+4"' # noqa yaml[line-length]
+  delegate_to: "{{ host.interfaces_attributes[0].ip }}"
+  register: bond_create
+  changed_when: bond_create.rc == 0
+
+- name: "Create subordinate 1 interface for {{ host.fqdn }}"
+  ansible.builtin.command:
+    cmd: 'nmcli connection add type ethernet slave-type bond con-name bond0-port1 ifname {{ iface.attached_devices[0] }} master {{ iface.identifier }}'
+  delegate_to: "{{ host.interfaces_attributes[0].ip }}"
+  register: bond_sub1
+  changed_when: bond_sub1.rc == 0
+
+- name: "Create subordinate 2 interface for {{ host.fqdn }}"
+  ansible.builtin.command:
+    cmd: 'nmcli connection add type ethernet slave-type bond con-name bond0-port2 ifname {{ iface.attached_devices[1] }} master {{ iface.identifier }}'
+  delegate_to: "{{ host.interfaces_attributes[0].ip }}"
+  register: bond_sub2
+  changed_when: bond_sub2.rc == 0
+
+- name: "Disable ipv4 on {{ iface.identifier }} interface {{ host.fqdn }}" # noqa name[template]
+  ansible.builtin.command:
+    cmd: 'nmcli connection modify {{ iface.identifier }} ipv4.method disabled ipv6.method ignore'
+  delegate_to: "{{ host.interfaces_attributes[0].ip }}"
+  register: bond_ipv4_disable
+  changed_when: bond_ipv4_disable.rc == 0
+
+- name: "Bring bond0 interface up on {{ host.fqdn }}"
+  ansible.builtin.command:
+    cmd: 'nmcli connection up {{ iface.identifier }}'
+  delegate_to: "{{ host.interfaces_attributes[0].ip }}"
+  register: bond_up
+  changed_when: bond_up.rc == 0
+
+- name: "Bring bond0 interface up on {{ host.fqdn }}"
+  ansible.builtin.command:
+    cmd: 'nmcli connection add type vlan ifname {{ iface.identifier }}.{{ iface.tag }} con-name {{ iface.identifier }}.{{ iface.tag }} id {{ iface.tag }} dev {{ iface.identifier }} ip4 {{ iface.ip }}/{{ _default_bond_subnet_prefix }} ipv4.method manual'  # noqa yaml[line-length]
+  delegate_to: "{{ host.interfaces_attributes[0].ip }}"
+  register: bond_vlan
+  changed_when: bond_vlan.rc == 0
+
+- name: "Ping bond0 gateway for {{ host.fqdn }}"
+  ansible.builtin.command:
+    cmd: 'ping -c3 {{ _bond_default_gateway }}'  # noqa yaml[line-length]
+  delegate_to: "{{ host.interfaces_attributes[0].ip }}"
+  register: bond_ping
+  changed_when: bond_ping.rc == 0
+  failed_when: '100% packet loss in bond_ping.stdout'

@@ -2,7 +2,7 @@
 # Create the host based on the parameters
 - name: "Set deployment defaults"
   ansible.builtin.set_fact:
-    target_mac: '{{ host.mac | default("ff:ff:ff:ff:ff:ff") }}'
+    target_mac: '{{ host.interfaces_attributes[0].mac | lower | default("ff:ff:ff:ff:ff:ff") }}'
     target_compute_resource: "{{ host.compute_resource }}"
 
 - name: "A baremetal deployment has been requested. Gathering discovered host information."
@@ -49,7 +49,7 @@
 
         - name: "Filter the results for available nics"
           when:
-            - host.compute_resource == "baremetal" and (host.mac == "ff:ff:ff:ff:ff:ff" or host.mac is not defined)
+            - host.compute_resource == "baremetal" and (host.interfaces_attributes[0].mac == "ff:ff:ff:ff:ff:ff" or host.interfaces_attributes[0].mac is not defined) # noqa yaml[line-length]
             - host.req_nic_count and current_host.nic_count > host.req_nic_count
           ansible.builtin.set_fact:
             has_nics: true
@@ -87,8 +87,7 @@
     kickstart_repository: "{{ host.kickstart_repository | default(omit) }}"
     compute_resource: "{{ target_compute_resource | default(omit) }}"
     compute_profile: "{{ host.compute_profile | default(omit) }}"
-    mac: "{{ target_mac }}"
-    ip: "{{ host.ip | default(omit) }}"
+    interfaces_attributes: "{{ host.interfaces_attributes }}"
     build: true
     state: present
     validate_certs: "{{ satellite_validate_certs }}"
