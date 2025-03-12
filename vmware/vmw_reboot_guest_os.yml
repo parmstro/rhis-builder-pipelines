@@ -2,8 +2,8 @@
 # vmw_reboot_guest_os.yml
 
 - name: Reboot the OS on the list of vmware hosts
-  hosts: controller
-  connection: local
+  hosts: provisioner
+  
   vars:
     power_action_target_state: "reboot-guest"
 

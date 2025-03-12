@@ -6,8 +6,8 @@
 # as we build systems and perform various tests.
 
 - name: "Promote the configured Content Views and Composite Content Views"
-  hosts: controller
-  connection: local
+  hosts: provisioner
+  
 
   tasks:
     - name: "Load the vault variables"

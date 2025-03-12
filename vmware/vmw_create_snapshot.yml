@@ -2,8 +2,8 @@
 # vmw_create_snapshot.yml
 
 - name: "Create the snapshots for the list of hosts"
-  hosts: controller
-  connection: local
+  hosts: provisioner
+  
   vars:
     snapshot_target_state: "present"
 

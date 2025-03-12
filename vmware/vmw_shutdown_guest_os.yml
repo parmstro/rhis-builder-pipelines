@@ -2,8 +2,8 @@
 # vmw_shutdown_guest_os.yml
 
 - name: "Shutdown guest OS gracefully on the list of vmware hosts"
-  hosts: controller
-  connection: local
+  hosts: provisioner
+  
   vars:
     power_action_target_state: "shutdown-guest"
 
