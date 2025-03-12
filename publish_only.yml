@@ -5,7 +5,6 @@
 
 - name: "Publish the configured Content Views and Composite Content Views"
   hosts: provisioner
-  
 
   tasks:
     - name: "Load the vault variables"

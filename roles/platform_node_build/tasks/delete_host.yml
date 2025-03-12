@@ -1,7 +1,6 @@
 ---
 # Delete the host
 - name: "Delete the host"
-  
   block:
 
     - name: "The host to delete is baremetal - wiping the disks"
