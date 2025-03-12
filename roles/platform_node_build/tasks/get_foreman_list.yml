@@ -2,7 +2,6 @@
 # This task retrieves a list of items and the details for each item
 
 - name: "Perform resouce query against Satellite server"
-  connection: local
   block:
 
     - name: "Fetch search results from Satellite"

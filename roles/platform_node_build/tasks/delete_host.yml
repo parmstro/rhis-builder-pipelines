@@ -1,7 +1,7 @@
 ---
 # Delete the host
 - name: "Delete the host"
-  connection: local
+  
   block:
 
     - name: "The host to delete is baremetal - wiping the disks"

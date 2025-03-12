@@ -1,8 +1,7 @@
 ---
 # This play cleans up content views and leaves only a configured amount remaining
 - name: Publish the configured Content Views and Composite Content Views
-  hosts: controller
-  connection: local
+  hosts: provisioner
 
   pre_tasks:
     - name: "Load the vault variables"

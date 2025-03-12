@@ -78,7 +78,6 @@
             host: "{{ host.fqdn }}"
             search_regex: "OpenSSH"
             delay: 600
-          connection: local
 
         - name: "Synchronous Build - Wait an additional time out for post configuration."
           ansible.builtin.wait_for:
@@ -88,4 +87,3 @@
             host: "{{ host.fqdn }}"
             search_regex: "OpenSSH"
             delay: "{{ post_deploy_timeout }}"
-          connection: local

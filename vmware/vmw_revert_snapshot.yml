@@ -2,8 +2,8 @@
 # vmw_revert_snapshot.yml
 
 - name: "Revert snapshots for the list of hosts"
-  hosts: controller
-  connection: local
+  hosts: provisioner
+  
   vars:
     snapshot_target_state: "revert"
 

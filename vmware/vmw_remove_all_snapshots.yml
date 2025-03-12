@@ -2,8 +2,8 @@
 # vmw_remove_all_snapshots.yml
 
 - name: Delete all the vm snapshots for the list of hosts
-  hosts: controller
-  connection: local
+  hosts: provisioner
+  
   vars:
     snapshot_target_state: "remove_all"
 

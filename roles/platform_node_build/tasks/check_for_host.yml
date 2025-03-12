@@ -1,7 +1,6 @@
 ---
 
 - name: "Check if the host exists and is reachable"
-  connection: local
   block:
 
     - name: "Assume the host does not exist"

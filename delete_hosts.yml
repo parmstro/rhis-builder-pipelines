@@ -1,8 +1,8 @@
 ---
 # Delete Host using Satellite
 - name: "Delete hosts from specified Satellte/Foreman hostgroups"
-  hosts: controller
-  connection: local
+  hosts: provisioner
+  
   gather_facts: false
 
   tasks:

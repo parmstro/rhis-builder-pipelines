@@ -2,8 +2,8 @@
 # vmw_suspend_vm.yml
 
 - name: "Suspend the power for the vmware hosts"
-  hosts: controller
-  connection: local
+  hosts: provisioner
+  
   vars:
     power_action_target_state: "suspended"
 

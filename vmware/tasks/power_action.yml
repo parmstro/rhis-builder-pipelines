@@ -6,7 +6,7 @@
     power_action_force: false
 
 - name: Find Guest's Folder using name
-  connection: local
+  
   community.vmware.vmware_guest_find:
     hostname: "{{ vcenter_hostname }}"
     username: "{{ vcenter_username }}"
@@ -21,7 +21,7 @@
     power_action_force: true
 
 - name: "Power Action is setting power state: {{ power_action_target_state }} for host: {{ host.name }}" # noqa: name[template]
-  connection: local
+  
   community.vmware.vmware_guest_powerstate:
     hostname: "{{ vcenter_hostname }}"
     username: "{{ vcenter_username }}"
