@@ -16,11 +16,11 @@ KATELLO_API = f"https://{SAT}/katello/api/v2/"
 
 POST_HEADERS = {'content-type': 'application/json'}
 # Default credentials to login to Satellite 6
-USERNAME = "admin"
-PASSWORD = "#Legend2013"
+USERNAME = "provisioner"
+PASSWORD = "@@2MonkeyRunsInCircles"
 # Ignore SSL for now
 # SSL_VERIFY = False
-SSL_VERIFY = "/home/parmstro/Downloads/sat6.parmstrong.ca-katello-server-ca.crt" # Put the path to your CA certificate here to allow SSL_VERIFY
+SSL_VERIFY = "~/provisioner/sat6.parmstrong.ca-katello-server-ca.crt" # Put the path to your CA certificate here to allow SSL_VERIFY
 
 
 def get_json(url):
