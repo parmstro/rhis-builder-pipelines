@@ -16,8 +16,8 @@ KATELLO_API = f"https://{SAT}/katello/api/v2/"
 
 POST_HEADERS = {'content-type': 'application/json'}
 # Default credentials to login to Satellite 6
-USERNAME = "provisioner"                  # not secret
-PASSWORD = "@@2MonkeyRunsInCircles"       # not secret
+USERNAME = "provisioner"                  # notsecret
+PASSWORD = "@@2MonkeyRunsInCircles"       # notsecret
 # Ignore SSL for now
 # SSL_VERIFY = False
 SSL_VERIFY = "~/provisioner/sat6.parmstrong.ca-katello-server-ca.crt" # Put the path to your CA certificate here to allow SSL_VERIFY
