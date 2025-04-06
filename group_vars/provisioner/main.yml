@@ -13,15 +13,15 @@ use_sync_build: false
 
 
 # Base network info
-_default_domain_lab: "parmstrong.ca"
-_default_subnetname_lab: "labsubnet"
+_default_domain_lab: "example.ca"
+_default_subnetname_lab: "example.ca"
 _default_provision_iface_lab: "eno1"
 _default_vm_provision_iface_lab: "ens192"
 
 # Bond network
 _default_bond_subnetname_lab: "bond_subnet"
 _default_bond_subnet_prefix_lab: 23
-_default_bond_default_gateway_lab: 192.168.252.1
+_default_bond_default_gateway_lab: 192.168.140.1
 _default_bond_iface_lab: "bond0"
 _default_child_iface1_lab: "enp2s0f0"
 _default_child_iface2_lab: "enp2s0f1"

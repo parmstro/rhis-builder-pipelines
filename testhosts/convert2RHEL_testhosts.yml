@@ -7,34 +7,38 @@ platform_hosts:
     delete_host: false
     organization: "Default Organization"
     location: "Default Location"
-    hostgroup: "hg_x86_64_centos79_base"
+    hostgroup: "hg_x86_64_centos79_vm"
     compute_resource: "vcenter.parmstrong.ca"
     compute_profile: "2-Medium"
     mac: "00:50:56:ff:ff:ff"
+    comment: "c2r_demo_host deleteme"
 
   - fqdn: "centostest2.parmstrong.ca"
     delete_host: false
     organization: "Default Organization"
     location: "Default Location"
-    hostgroup: "hg_x86_64_centos79_base"
+    hostgroup: "hg_x86_64_centos79_vm"
     compute_resource: "vcenter.parmstrong.ca"
     compute_profile: "2-Medium"
     mac: "00:50:56:ff:ff:ff"
+    comment: "c2r_demo_host deleteme"
 
   - fqdn: "oeltest1.parmstrong.ca"
     delete_host: false
     organization: "Default Organization"
     location: "Default Location"
-    hostgroup: "hg_x86_64_oel79_base"
+    hostgroup: "hg_x86_64_oel79_vm"
     compute_resource: "vcenter.parmstrong.ca"
     compute_profile: "2-Medium"
     mac: "00:50:56:ff:ff:ff"
+    comment: "c2r_demo_host deleteme"
 
   - fqdn: "oeltest2.parmstrong.ca"
     delete_host: false
     organization: "Default Organization"
     location: "Default Location"
-    hostgroup: "hg_x86_64_oel79_base"
+    hostgroup: "hg_x86_64_oel79_vm"
     compute_resource: "vcenter.parmstrong.ca"
     compute_profile: "2-Medium"
     mac: "00:50:56:ff:ff:ff"
+    comment: "c2r_demo_host deleteme"
