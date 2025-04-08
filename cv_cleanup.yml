@@ -14,6 +14,15 @@
       ansible.builtin.include_vars:
         file: "{{ vars_path }}"
 
+    - name: "Load the vault variables"
+      when: vault_dir is defined
+      ansible.builtin.include_vars:
+        dir: "{{ vault_dir }}"
+
+    - name: "Load the other variables"
+      when: vars_dir is defined
+      ansible.builtin.include_vars:
+        dir: "{{ vars_dir }}"
   roles:
     - role: redhat.satellite.content_view_version_cleanup
       vars:
