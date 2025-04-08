@@ -14,6 +14,10 @@
   ansible.builtin.set_fact:
     target_mac: '{{ host.mac | default("ff:ff:ff:ff:ff:ff") }}'
 
+- name: "Log the target mac address"
+  ansible.builtin.debug:
+    var: target_mac
+
 - name: "A baremetal deployment has been requested. Gathering discovered host information."
   when: host.compute_resource == "baremetal"
   block:
@@ -66,7 +70,7 @@
             loop_var: targethost
           register: available_hosts
 
-        - name: "Select the first available host"
+        - name: "Select the first available discovered host"
           ansible.builtin.set_fact:
             target: "{{ available_hosts.results | json_query('[].targethost.ansible_facts') | list | first }}"
 
@@ -81,32 +85,59 @@
           ansible.builtin.fail:
             msg: "There are no discovered hosts that meet the criteria"
 
-- name: "Deploy the host"
+- name: "Update the compute attributes"
+  ansible.builtin.set_fact:
+    create_host_compute_attributes: "{{ host.compute_attributes | default({}) | combine({'start': 1}) }}"
+
+- name: "Deploy the host - {{ host.fqdn }}"
   redhat.satellite.host:
-    username: "{{ satellite_username }}"
-    password: "{{ satellite_password }}"
+    username: "{{ satellite_username | default(omit) }}"
+    password: "{{ satellite_password | default(omit) }}"
+    use_gssapi: "{{ satellite_use_gssapi | default(omit) }}"
     server_url: "{{ satellite_url }}"
     organization: "{{ host.organization }}"
     location: "{{ host.location }}"
     name: "{{ host.fqdn }}"
-    comment: "{{ host.build_comment | default(omit) }}"
-    hostgroup: "{{ host.hostgroup }}"
-    kickstart_repository: "{{ host.kickstart_repository | default(omit) }}"
-    compute_resource: "{{ target_compute_resource | default(omit) }}"
-    compute_profile: "{{ host.compute_profile | default(omit) }}"
-    interfaces_attributes: "{{ host.interfaces_attributes | default(omit) }}"
     build: true
     state: present
+    activation_keys: "{{ host.activation_keys | default(omit) }}"
+    architecture: "{{ host.architecture | default(omit) }}"
+    ca_path: "{{ host.ca_path | default(omit) }}"
+    comment: "{{ host.build_comment | default(omit) }}"
+    compute_attributes: "{{ create_host_compute_attributes }}"
+    compute_profile: "{{ host.compute_profile | default(omit) }}"
+    compute_resource: "{{ target_compute_resource | default(omit) }}"
+    config_groups: "{{ host.config_groups | default(omit) }}"
+    content_source: "{{ host.content_source | default(omit) }}"
+    content_view: "{{ host.content_view | default(omit) }}"
+    domain: "{{ host.domain | default(omit) }}"
+    hostgroup: "{{ host.hostgroup | default(omit) }}"
+    image: "{{ host.image | default(omit) }}"
+    interfaces_attributes: "{{ host.interfaces_attributes | default(omit) }}"
+    ip: "{{ host.ip | default(omit) }}"
+    kickstart_repository: "{{ host.kickstart_repository | default(omit) }}"
+    lifecycle_environment: "{{ host.lifecycle_environment | default(omit) }}"
+    mac: "{{ host.mac | default(omit) }}"
+    medium: "{{ host.medium | default(omit) }}"
+    openscap_proxy: "{{ host.openscap_proxy | default(omit) }}"
+    operatingsystem: "{{ host.operatingsystem | default(omit) }}"
+    owner: "{{ host.owner | default(omit) }}"
+    owner_group: "{{ host.owner_group | default(omit) }}"
+    ptable: "{{ host.partition_table | default(omit) }}"
+    parameters: "{{ host.parameters | default(omit) }}"
+    pxe_loader: "{{ host.pxe_loader | default(omit) }}"
+    realm: "{{ host.realm | default(omit) }}"
+    root_pass: "{{ host.root_pass | default(omit) }}"  # careful with that axe Eugene!
+    subnet: "{{ host.subnet | default(omit) }}"
+    subnet6: "{{ host.subnet6 | default(omit) }}"
     validate_certs: "{{ satellite_validate_certs }}"
-    compute_attributes:
-      start: "1"
   register: deploy_response
 
-- name: "The result of the deployment operation was:"
+- name: "The result of the deployment operation for {{ host.fqdn }}:"
   ansible.builtin.debug:
     var: deploy_response
 
-- name: "Restart the host"
+- name: "Restart the host - {{ host.fqdn }}"
   when: host.compute_resource == "baremetal"
   ansible.builtin.uri:
     url: "{{ satellite_url }}/api/v2/discovered_hosts/{{ target_name }}/reboot"
@@ -121,7 +152,7 @@
       Accept: :application/json,version=2
   register: restart_response
 
-- name: "The result of the baremetal reboot operation was:"
+- name: "The result of the baremetal reboot operation for - {{ host.fqdn }}"
   when: host.compute_resource == "baremetal"
   ansible.builtin.debug:
     var: restart_response
