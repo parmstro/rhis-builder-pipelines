@@ -1,0 +1,34 @@
+---
+
+- name: "Test build all hostgroups created configured on Satellite with hosts defined in test_host_host.yml"
+  hosts: provisioner
+  become: true
+  gather_facts: true
+  vars_files:
+    - testhosts/test_host_list.yml
+
+  tasks:
+
+    - name: "Load the vault variables"
+      when: vault_path is defined
+      ansible.builtin.include_vars:
+        file: "{{ vault_path }}"
+
+    - name: "Load the other variables"
+      when: vars_path is defined
+      ansible.builtin.include_vars:
+        file: "{{ vars_path }}"
+
+    - name: "Load the vault variables"
+      when: vault_dir is defined
+      ansible.builtin.include_vars:
+        dir: "{{ vault_dir }}"
+
+    - name: "Load the other variables"
+      when: vars_dir is defined
+      ansible.builtin.include_vars:
+        dir: "{{ vars_dir }}"
+
+    - name: "Apply role platform_node_build"
+      ansible.builtin.include_role:
+        name: "platform_node_build"
