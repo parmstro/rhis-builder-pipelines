@@ -14,7 +14,7 @@
     gfl_satellite_organization: "{{ host.organization | default(omit) }}"
     gfl_sat_params: "{{ host.params | default(omit) }}"
     gfl_sat_resource: "hosts"
-    gfl_sat_search_string: "name = {{ host.fqdn }} and build_status = pending"
+    gfl_sat_search_string: "name = {{ host.fqdn }}"  # " and build_status = pending"
 
 - name: "If we found our host we find out host"
   when: (gfl_resources | length) > 0
