@@ -87,7 +87,7 @@
 
 - name: "Update the compute attributes"
   ansible.builtin.set_fact:
-    create_host_compute_attributes: "{{ host.compute_attributes | default({}) | combine({'start': 1}) }}"
+    create_host_compute_attributes: "{{ host.compute_attributes | default({}) | combine({'start': '1'}) }}"
 
 - name: "Deploy the host - {{ host.fqdn }}"
   redhat.satellite.host:
