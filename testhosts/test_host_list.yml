@@ -29,7 +29,7 @@ platform_hosts:
     organization: "Default Organization"
     location: "Default Location"
     hostgroup: "hg_x86_64_rhel8_vm"
-    activation_keys: "[SOE8_dev]"
+    activation_keys: ["SOE8_dev"]
     lifecycle_environment: "Development"
     content_view: "SOE8"
     compute_resource: "VMware_Lab"
