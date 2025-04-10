@@ -10,40 +10,57 @@
     loop_var: host
   register: async_list
 
+# update logic to only monitor hosts being actively built
+
+- name: "Will monitoring this list of hosts for completion"
+  when:
+    - hosts_to_monitor is defined
+    - (hosts_to_monitor | length) > 0
+  ansible.builtin.debug:
+    var: hosts_to_monitor
+
 - name: "Wait for all nodes to be built- Task will complete when the last host is up and running."
+  when:
+    - hosts_to_monitor is defined
+    - (hosts_to_monitor | length) > 0
   ansible.builtin.wait_for:
     timeout: 7200
     sleep: 60
     port: 22
     host: "{{ host.fqdn }}"
     search_regex: "OpenSSH"
-  loop: "{{ platform_hosts }}"
+  loop: "{{ hosts_to_monitor }}"
   loop_control:
     loop_var: host
+  become: false  # no root ssh login
 
 - name: "Wait an additional time out for any post configuration."
+  when:
+    - hosts_to_monitor is defined
+    - (hosts_to_monitor | length) > 0
   ansible.builtin.wait_for:
     timeout: "{{ post_deploy_timeout }}"
     sleep: 60
     port: 22
     host: "{{ host.fqdn }}"
     search_regex: "OpenSSH"
-  loop: "{{ platform_hosts }}"
+  loop: "{{ hosts_to_monitor }}"
   loop_control:
     loop_var: host
+  become: false  # no root ssh login
 
-# This may cause a job to run on existing hosts that
-# were deleted and recreated. They should already be patched
-# to the latest during build. This is a minor issue.
-- name: "Ensure pre-existing systems are patched to latest"
+- name: "Ensure built systems are patched to latest"
   when:
-    - host_exists
+    - hosts_to_monitor is defined
+    - (hosts_to_monitor | length) > 0
   redhat.satellite.job_invocation:
-    username: "{{ satellite_username }}"
-    password: "{{ satellite_password }}"
+    username: "{{ satellite_username | default(omit) }}"
+    password: "{{ satellite_password | default(omit) }}"
+    use_gssapi: "{{ satellite_use_gssapi | default(omit) }}"
     server_url: "{{ satellite_url }}"
     job_template: "Update packages by search query - Katello Ansible Default"
     search_query: "name ^ ({{ host.fqdn }})"
-  loop: "{{ platform_hosts }}"
+    validate_certs: "{{ satellite_validate_certs }}"
+  loop: "{{ hosts_to_monitor }}"
   loop_control:
     loop_var: host

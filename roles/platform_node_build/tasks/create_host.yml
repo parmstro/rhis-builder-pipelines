@@ -28,8 +28,9 @@
     - name: "Get info on discovered hosts that meet criteria"
       ansible.builtin.include_tasks: "get_foreman_list.yml"
       vars:
-        gfl_sat_username: "{{ satellite_username }}"
-        gfl_sat_password: "{{ satellite_password }}"
+        gfl_sat_username: "{{ satellite_username | default(omit) }}"
+        gfl_sat_password: "{{ satellite_password | default(omit) }}"
+        gfl_satellite_use_gssapi: "{{ satellite_use_gssapi | default(omit) }}"
         gfl_satellite_server_url: "{{ satellite_url }}"
         gfl_satellite_validate_certs: "{{ satellite_validate_certs }}"
         gfl_satellite_organization: "{{ host.organization | default(omit) }}"
@@ -103,7 +104,7 @@
     activation_keys: "{{ host.activation_keys | default(omit) }}"
     architecture: "{{ host.architecture | default(omit) }}"
     ca_path: "{{ host.ca_path | default(omit) }}"
-    comment: "{{ host.build_comment | default(omit) }}"
+    comment: "{{ host.comment | default(omit) }}"
     compute_attributes: "{{ create_host_compute_attributes }}"
     compute_profile: "{{ host.compute_profile | default(omit) }}"
     compute_resource: "{{ target_compute_resource | default(omit) }}"
@@ -123,7 +124,7 @@
     operatingsystem: "{{ host.operatingsystem | default(omit) }}"
     owner: "{{ host.owner | default(omit) }}"
     owner_group: "{{ host.owner_group | default(omit) }}"
-    ptable: "{{ host.partition_table | default(omit) }}"
+    ptable: "{{ host.ptable | default(omit) }}"
     parameters: "{{ host.parameters | default(omit) }}"
     pxe_loader: "{{ host.pxe_loader | default(omit) }}"
     realm: "{{ host.realm | default(omit) }}"
@@ -142,8 +143,9 @@
   ansible.builtin.uri:
     url: "{{ satellite_url }}/api/v2/discovered_hosts/{{ target_name }}/reboot"
     method: PUT
-    user: "{{ satellite_username }}"
-    password: "{{ satellite_password }}"
+    user: "{{ satellite_username | default(omit) }}"
+    password: "{{ satellite_password | default(omit) }}"
+    use_gssapi: "{{ satellite_use_gssapi | default(omit) }}"
     force_basic_auth: true
     validate_certs: "{{ satellite_validate_certs }}"
     status_code: 200
@@ -162,8 +164,9 @@
   ansible.builtin.uri:
     url: "{{ satellite_url }}/api/v2/discovered_hosts/{{ target_name }}"
     method: DELETE
-    user: "{{ satellite_username }}"
-    password: "{{ satellite_password }}"
+    user: "{{ satellite_username | default(omit) }}"
+    password: "{{ satellite_password | default(omit) }}"
+    use_gssapi: "{{ satellite_use_gssapi | default(omit) }}"
     force_basic_auth: true
     validate_certs: "{{ satellite_validate_certs }}"
     status_code: 200
@@ -176,3 +179,13 @@
   when: host.compute_resource == "baremetal"
   ansible.builtin.debug:
     var: remove_response
+
+- name: "Update hosts being built list"
+  when: deploy_response.changed and not deploy_response.failed
+  ansible.builtin.set_fact:
+    hosts_to_monitor: "{{ hosts_to_monitor | default([]) + [{'fqdn': host.fqdn}] }}"
+
+- name: "Will monitor host list"
+  when: hosts_to_monitor is defined
+  ansible.builtin.debug:
+    var: hosts_to_monitor

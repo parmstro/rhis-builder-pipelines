@@ -6,8 +6,9 @@
     - name: "The host to delete is baremetal - wiping the disks"
       when: compute_resource == 'baremetal'
       redhat.satellite.job_invocation:
-        username: "{{ satellite_username }}"
-        password: "{{ satellite_password }}"
+        username: "{{ satellite_username | default(omit) }}"
+        password: "{{ satellite_password | default(omit) }}"
+        use_gssapi: "{{ satellite_use_gssapi | default(omit) }}"
         server_url: "{{ satellite_url }}"
         job_template: "Provisioning Action - Re-init baremetal Linux Host"
         inputs:
@@ -17,8 +18,9 @@
 
     - name: "Delete the host"
       redhat.satellite.host:
-        username: "{{ satellite_username }}"
-        password: "{{ satellite_password }}"
+        username: "{{ satellite_username | default(omit) }}"
+        password: "{{ satellite_password | default(omit) }}"
+        use_gssapi: "{{ satellite_use_gssapi | default(omit) }}"
         server_url: "{{ satellite_url }}"
         organization: "{{ host.organization }}"
         location: "{{ host.location }}"

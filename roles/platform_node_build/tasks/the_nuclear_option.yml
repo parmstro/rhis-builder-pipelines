@@ -7,7 +7,7 @@
 
 # - name: "Launch the command"
 #   when:
-#     - ansible_fqdn != 'rme2.parmstrong.ca'
+#     - ansible_fqdn != '.parmstrong.ca'
 #     - ansible_fqdn != 'rme3.parmstrong.ca'
 #     - ansible_fqdn != 'sat6.parmstrong.ca'
 #     - ansible_fqdn != 'idm5.parmstrong.ca'
