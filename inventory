@@ -1,2 +1,3 @@
 [provisioner]
-provisioner.example.ca
+localhost
+# provisioner.example.ca
