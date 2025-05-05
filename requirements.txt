@@ -1,0 +1,4 @@
+# Python requirements for VMware management
+
+pyVim
+pyvmomi
