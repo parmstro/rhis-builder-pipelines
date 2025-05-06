@@ -20,6 +20,7 @@
       ansible.builtin.dnf:
         name: "@jboss-eap7"
         state: "present"
+        update_cache: true
 
     - name: "Install maven"
       ansible.builtin.dnf:
