@@ -20,8 +20,8 @@ platform_hosts:
         managed: true
         primary: true
         provision: true
-        subnet: "{{ _default_subnetname }}"
-        mac: "ec:a8:6b:f2:08:7a"
+        subnet: "example.ca"
+        mac: "54:b2:03:f1:0b:9f"
         ip: "192.168.140.201"
 
   - fqdn: "hg-x86-64-rhel8-vm1.example.ca"
@@ -58,7 +58,7 @@ platform_hosts:
         primary: true
         provision: true
         subnet: "{{ _default_subnetname }}"
-        mac: "ec:a8:6b:f2:06:bc"
+        mac: "54:b2:03:f1:0b:d2"
         ip: "192.168.140.202"
 
   - fqdn: "hg-x86-64-rhel9-vm1.example.ca"
