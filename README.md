@@ -6,6 +6,8 @@ Fork it. Clone it. Configure it. Test it. Change it. Commit it. Create a PR.
 
 This repository contains sample application content, some vmware operations ansible, some satellite operations ansible and a node builder role. 
 
+See rhis-builder-vault-SAMPLE repo for secrets definitions.
+
 It is not a very organized repository.
 
 All the roles and tasks are solid. They just have been grouped here for a lack of a more convenient logical location.  It will be reorganized eventually. If locations change, links to the new locations will be created but this original content will remain.
