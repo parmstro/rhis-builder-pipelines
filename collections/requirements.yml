@@ -1,9 +1,0 @@
----
-
-collections:
-  - name: "community.general"
-  - name: "community.postgresql"
-  - name: "community.mysql"
-  - name: "community.vmware"
-  - name: "redhat.satellite"
-    version: "5.0.0"
