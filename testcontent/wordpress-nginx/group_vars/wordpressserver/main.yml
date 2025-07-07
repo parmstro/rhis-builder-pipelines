@@ -1,7 +1,7 @@
 ---
 # Variables listed here are applicable to all host groups
 epel8_rpms_repo_name: "Default_Organization_EPEL8_EPEL8"
-epel8_streams_repo_name: "Default_Organization_EPEL8_EPEL8_Streams"
+epel8_streams_repo_name: "Default_Organization_EPEL8_EPEL8_Stream"
 
 epel7_rpms_repo_name: "Default_Organization_EPEL7_EPEL7"
 
