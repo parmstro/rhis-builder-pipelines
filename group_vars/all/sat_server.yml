@@ -1,8 +1,0 @@
----
-
-satellite_url: "https://satellite.example.ca/"
-satellite_organization: "Default Organization"
-satellite_location: "Default Location"
-satellite_username: "{{ satellite_username_vault }}"
-satellite_password: "{{ satellite_password_vault }}"
-satellite_validate_certs: false
