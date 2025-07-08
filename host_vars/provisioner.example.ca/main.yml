@@ -1,0 +1,28 @@
+# A valid mac is required when using bare metal as compute resource
+# this can come from a query of satellites available discovered hosts or
+# be a known value - for all other compute resources, the mac is assigned by
+# the compute resource
+discovered_hosts_resource: "discovered_hosts"
+discovered_hosts_search: "disk_count = 1 and memory > 32000"
+discovered_host_req_nic_count: 1  # we use > below so does not include lo
+host_build_comment: "Created by ansible for content test"
+enable_debug_logging: false
+deploy: true
+post_deploy_timeout: 600
+use_sync_build: false
+
+
+# Base network info
+_default_domain: "example.ca"
+_default_subnetname: "example.ca"
+_default_provision_iface: "eno1"
+_default_vm_provision_iface: "ens192"
+
+# Bond network
+_default_bond_subnetname: "bond_subnet"
+_default_bond_subnet_prefix: 23
+_default_bond_default_gateway: 192.168.140.1
+_default_bond_iface: "bond0"
+_default_child_iface1: "enp2s0f0"
+_default_child_iface2: "enp2s0f1"
+# _default_bond_vlan_tag_meta: "940"
