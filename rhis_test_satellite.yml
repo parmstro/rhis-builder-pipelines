@@ -4,8 +4,7 @@
   hosts: provisioner
   become: true
   gather_facts: true
-  vars_files:
-    - testhosts/test_host_list.yml
+  connection: local  # for container
 
   tasks:
 
