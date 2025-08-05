@@ -40,6 +40,11 @@
   ansible.builtin.set_fact:
     use_sync_build: true
 
+- name: "Initialize builds_released if required"
+  when: builds_released is not defined
+  ansible.builtin.set_fact:
+    builds_released: 0
+
 - name: "Determine if host already exists - {{ host.fqdn }}"
   ansible.builtin.include_tasks: check_for_host.yml
 
@@ -60,9 +65,25 @@
   when: (not host_exists) or ( host_exists and host.delete_host )
   block:
 
+    - name: "Increment the number of builds released"
+      ansible.builtin.set_fact:
+        builds_released: "{{ builds_released + 1 }}"
+
     - name: "Delete host has been requested - deleting host {{ host.fqdn }}"
       when: host.delete_host
       ansible.builtin.include_tasks: delete_host.yml
+
+    - name: "If we have reached the release limit, wait for time out to release more builds"
+      when: builds_released > build_release_limit
+      block:
+
+        - name: "Build Release Limit Reached: Waiting for build_release_timeout seconds - {{ build_release_timeout }}"
+          ansible.builtin.wait_for:
+            timeout: "{{ build_release_timeout }}"
+
+        - name: "Wait Complete: Reset the builds_released counter and continue building..."
+          ansible.builtin.set_fact:
+            builds_released: 1
 
     - name: "Creating the host - {{ host.fqdn }}"
       ansible.builtin.include_tasks: create_host.yml
