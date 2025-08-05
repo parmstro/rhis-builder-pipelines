@@ -67,14 +67,18 @@
 
     - name: "Increment the number of builds released"
       ansible.builtin.set_fact:
-        builds_released: "{{ builds_released + 1 }}"
+        builds_released: "{{ (builds_released | int) + 1 }}"
 
     - name: "Delete host has been requested - deleting host {{ host.fqdn }}"
       when: host.delete_host
       ansible.builtin.include_tasks: delete_host.yml
 
+    - name: "Determined limit"
+      ansible.builtin.set_fact:
+        reached_limit: "{{ (builds_released | int) > (build_release_limit | int) }}"
+
     - name: "If we have reached the release limit, wait for time out to release more builds"
-      when: builds_released > build_release_limit
+      when: reached_limit
       block:
 
         - name: "Build Release Limit Reached: Waiting for build_release_timeout seconds - {{ build_release_timeout }}"

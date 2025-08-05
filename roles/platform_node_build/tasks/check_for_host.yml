@@ -17,7 +17,7 @@
     gfl_satellite_resource: "hosts"
     gfl_satellite_search_string: "name = {{ host.fqdn }}"  # " and build_status = pending"
 
-- name: "If we found our host we find out host"
+- name: "If we found our host... we find our host"
   when: (gfl_resources | length) > 0
   ansible.builtin.set_fact:
     host_exists: true
