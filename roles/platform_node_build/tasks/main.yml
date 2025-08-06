@@ -25,7 +25,7 @@
     - (hosts_to_monitor | length) > 0
   ansible.builtin.wait_for:
     timeout: 7200
-    sleep: 60
+    sleep: 15
     port: 22
     host: "{{ host.fqdn }}"
     search_regex: "OpenSSH"
