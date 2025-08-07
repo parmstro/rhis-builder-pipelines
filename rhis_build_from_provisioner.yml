@@ -1,6 +1,6 @@
 ---
 
-- name: "Test build all hostgroups created configured on Satellite with hosts defined in test_host_host.yml"
+- name: "Build platform_hosts defined in variables from within the container"
   hosts: provisioner
   become: true
   gather_facts: true
