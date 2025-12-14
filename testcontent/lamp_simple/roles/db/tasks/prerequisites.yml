@@ -4,7 +4,6 @@
   ansible.builtin.dnf:
     name:
       - "@mariadb:10.3/server"
-      - "@python36:3.6/common"
     state: "present"
 
 - name: "Ensure python3-PyMySQL is really, really there. Because apparently its not"
