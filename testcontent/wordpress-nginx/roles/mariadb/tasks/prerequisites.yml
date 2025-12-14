@@ -6,7 +6,6 @@
   ansible.builtin.dnf:
     name:
       - "mariadb-server"
-      - "python"
       - "MySQL-python"
     state: "present"
 
@@ -15,7 +14,6 @@
   ansible.builtin.dnf:
     name:
       - "@mariadb:10.3/server"
-      - "@python36:3.6/common"
     state: present
 
 # - name: Ensure Python3 is the default python on RHEL8 because sample app is old
