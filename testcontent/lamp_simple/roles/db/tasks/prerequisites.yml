@@ -11,12 +11,15 @@
   register: pip_result
   changed_when: pip_result.rc == 0
 
-- name: Configure SELinux to allow mysql port {{ mysql_port }}
-  community.general.seport:
-    ports: "{{ mysql_port }}"
-    proto: "tcp"
-    setype: "mysqld_port_t"
-    state: "present"
+- name: "Configure SELinux to allow mysql port {{ mysql_port }}"
+  ansible.builtin.include_role: "redhat.rhel_system_roles.selinux"
+  vars:
+    selinux_ports:
+      - ports: "{{ mysql_port }}"
+        proto: "tcp"
+        setype: "mysqld_port_t"
+        state: "present"
+
 
 - name: "Ensure the proper log directory"
   ansible.builtin.file:
