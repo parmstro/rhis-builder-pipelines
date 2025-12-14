@@ -12,7 +12,8 @@
   changed_when: pip_result.rc == 0
 
 - name: "Configure SELinux to allow mysql port {{ mysql_port }}"
-  ansible.builtin.include_role: "redhat.rhel_system_roles.selinux"
+  ansible.builtin.include_role:
+    name: "redhat.rhel_system_roles.selinux"
   vars:
     selinux_ports:
       - ports: "{{ mysql_port }}"

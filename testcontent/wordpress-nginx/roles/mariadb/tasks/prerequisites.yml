@@ -38,10 +38,11 @@
     state: "enabled"
 
 - name: "Configure SELinux to allow mysql port {{ mysql_port }}"
-  ansible.builtin.include_role: "redhat.rhel_system_roles.selinux"
+  ansible.builtin.include_role:
+    name: "redhat.rhel_system_roles.selinux"
   vars:
     selinux_ports:
       - ports: "{{ mysql_port }}"
-        proto: "{{ mysql_port_protocol }}"
+        proto: "tcp"
         setype: "mysqld_port_t"
         state: "present"
