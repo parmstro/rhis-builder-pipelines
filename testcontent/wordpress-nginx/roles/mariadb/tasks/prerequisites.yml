@@ -38,6 +38,14 @@
     state: "enabled"
 
 - name: "Configure SELinux to allow mysql port {{ mysql_port }}"
+  when: ansible_distribution_major_version == "8"
+  ansible.builtin.command:
+    cmd: "semanage port -a -t mysqld_port_t -p tcp {{ mysql_port }}"
+  register: seport_result
+  changed_when: seport_result.rc == 0
+
+- name: "Configure SELinux to allow mysql port {{ mysql_port }}"
+  when: ansible_distribution_major_version > "8"
   ansible.builtin.include_role:
     name: "redhat.rhel_system_roles.selinux"
   vars:
