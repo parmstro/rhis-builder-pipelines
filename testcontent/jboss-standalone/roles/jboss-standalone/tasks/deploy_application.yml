@@ -1,9 +1,9 @@
 ---
 
-- name: "Configure the JBoss EAP 7 Standalone Service"
+- name: "Configure the JBoss EAP Standalone Service"
   when: jboss_deploy_standalone
   ansible.builtin.service:
-    name: eap7-standalone.service
+    name: "{{ jboss_eap_service }}"
     enabled: true
     state: started
 
@@ -16,7 +16,7 @@
 
 - name: Deploy the standalone configuration template
   ansible.builtin.template:
-    src: eap7-standalone.conf.j2
+    src: eap-standalone.conf.j2
     dest: "{{ jboss_standalone_conf_path }}"
     mode: "0644"
 
