@@ -3,7 +3,10 @@
 - name: "Install MariaDB AppStream"
   ansible.builtin.dnf:
     name:
-      - "@mariadb:10.3/server"
+      - "@mariadb:10.11/server"
+      - "python3-policycoreutils"
+      - "python39-PyMySQL"
+      - "php-mysqlnd"
     state: "present"
 
 - name: "Ensure python3-PyMySQL is really, really there. Because apparently its not"

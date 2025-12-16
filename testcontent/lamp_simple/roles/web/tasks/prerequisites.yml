@@ -5,7 +5,7 @@
   ansible.builtin.dnf:
     name:
       - "httpd"
-      - "@php:7.4/common"
+      - "@php:8.2/common"
     state: present
 
 - name: "Ensure php modules"
