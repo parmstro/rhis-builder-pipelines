@@ -5,7 +5,6 @@
 - name: "Install required python modules"
   ansible.builtin.dnf:
     pkg:
-      - "python3-policycoreutils"
       - "php-mysqlnd"
       - "python39-PyMySQL"
     state: present

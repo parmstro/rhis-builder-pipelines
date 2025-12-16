@@ -4,7 +4,6 @@
   ansible.builtin.dnf:
     name:
       - "@mariadb:10.11/server"
-      - "python3-policycoreutils"
       - "python39-PyMySQL"
       - "php-mysqlnd"
     state: "present"

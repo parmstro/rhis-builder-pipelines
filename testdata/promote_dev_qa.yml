@@ -3,7 +3,7 @@
 force_promote: true
 description: "Promoted by Ansible using rhis-builder"
 source_lce: "Library"
-target_lce: "SOE_Development"
+target_lce: "Development"
 
 content_views:
   - name: "SOE_RHEL8"

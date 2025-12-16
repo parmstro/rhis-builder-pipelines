@@ -8,30 +8,3 @@
     dest: "/etc/chrony.conf"
     mode: "0644"
   notify: "Restart chronyd"
-
-# Some modules will no longer run on RHEL8 without Python 3.7+
-# install via command + dnf
-- name: "Clean dnf metadata"
-  ansible.builtin.command: "dnf clean all"
-  register: dnf_clean_result
-  changed_when: dnf_clean_result.rc == 0
-
-- name: "Ensure python 3.9 module is reset"
-  ansible.builtin.command: "dnf -y module reset python39"
-  register: dnf_reset_result
-  changed_when: dnf_reset_result.rc == 0
-
-- name: "Ensure python 3.9 module is enabled"
-  ansible.builtin.command: "dnf -y module enable python39:3.9"
-  register: dnf_enable_result
-  changed_when: dnf_enable_result.rc == 0
-
-- name: "Ensure python 3.9 is installed"
-  ansible.builtin.command: "dnf -y module install python39:3.9/common"
-  register: dnf_install_result
-  changed_when: dnf_install_result.rc == 0
-
-- name: "Ensure python libselinux 3.9 is installed"
-  ansible.builtin.command: "dnf -y install python3-libselinux python3-libsemanage"
-  register: dnf_install_result
-  changed_when: dnf_install_result.rc == 0

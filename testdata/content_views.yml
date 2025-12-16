@@ -141,9 +141,9 @@ content_views:
     date_filter_name: "ErrataByDate"
     environments:
       - "Library"
-      - "SOE_Development"
-      - "SOE_Qualification"
-      - "SOE_Production"
+      - "Development"
+      - "Qualification"
+      - "Production"
 
   - name: "EPEL9"
     desc: "Extra Packages for Enterprise Linux 9"
@@ -373,7 +373,7 @@ content_views:
     date_filter_name: "ErrataByDate"
     environments:
       - "Library"
-      - "SOE_Development"
+      - "Development"
 
 composite_content_views:
   - name: "LEAPP_7_2_8"
@@ -384,7 +384,7 @@ composite_content_views:
       - "SOE_RHEL8"
     environments:
       - "Library"
-      - "SOE_Development"
+      - "Development"
 
   - name: "LEAPP_8_2_9"
     desc: "RHEL 8 to 9 Upgrade Content"
@@ -394,7 +394,7 @@ composite_content_views:
       - "LEAPP_2_9"
     environments:
       - "Library"
-      - "SOE_Development"
+      - "Development"
 
   - name: "SOE_JBoss"
     desc: "JBoss EAP7 on RHEL8 Demonstration Content"
@@ -404,4 +404,4 @@ composite_content_views:
       - "JBossEAP74"
     environments:
       - "Library"
-      - "SOE_Development"
+      - "Development"
