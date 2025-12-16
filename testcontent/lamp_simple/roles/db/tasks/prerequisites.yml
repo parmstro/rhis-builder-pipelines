@@ -60,9 +60,16 @@
     state: "started"
     enabled: true
 
+- name: Ensure python3-firewall is installed
+  ansible.builtin.dnf:
+    name: python3-firewall
+    state: present
+
 - name: "Add firewall rules"
   ansible.posix.firewalld:
     port: "{{ mysql_port }}/tcp"
     permanent: true
     immediate: true
     state: "enabled"
+  vars:
+    ansible_python_interpreter: /bin/python3
