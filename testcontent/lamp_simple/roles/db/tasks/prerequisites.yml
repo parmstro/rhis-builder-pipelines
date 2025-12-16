@@ -71,5 +71,3 @@
     permanent: true
     immediate: true
     state: "enabled"
-  vars:
-    ansible_python_interpreter: /bin/python3

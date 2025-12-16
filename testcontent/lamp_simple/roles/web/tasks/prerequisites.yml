@@ -24,6 +24,11 @@
     state: "started"
     enabled: true
 
+- name: Ensure python3-firewall is installed
+  ansible.builtin.dnf:
+    name: python3-firewall
+    state: present
+
 - name: "Ensure firewalld rules"
   ansible.posix.firewalld:
     port: "{{ httpd_port }}/tcp"
