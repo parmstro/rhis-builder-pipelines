@@ -4,9 +4,9 @@
 
 - name: "Install required python modules"
   ansible.builtin.dnf:
-    pkg:
+    name:
       - "php-mysqlnd"
-      - "python39-PyMySQL"
+      - "python3-PyMySQL"
     state: present
 
 # - name: "Install the php mysql"
