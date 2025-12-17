@@ -22,7 +22,7 @@
     login_user: "root"
     config_file: "/etc/my.cnf"
     state: present
-    login_unix_socket: /var/run/mysqld/mysqld.sock
+    login_unix_socket: "/var/lib/mysql/mysql.sock"
 
 - name: "Create WordPress database user"
   community.mysql.mysql_user:
