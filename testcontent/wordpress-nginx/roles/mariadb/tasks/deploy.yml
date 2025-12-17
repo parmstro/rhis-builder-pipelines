@@ -1,5 +1,21 @@
 ---
 
+- name: "Ensure that the log file exists"
+  ansible.builtin.file:
+    name: "/var/log/mysqld.log"
+    state: present
+    owner: "mysql"
+    group: "mysql"
+    mode: "0640"
+
+- name: "Ensure that the runtime directory exists"
+  ansible.builtin.file:
+    name: "/var/run/mysqld/"
+    state: directory
+    owner: "mysql"
+    group: "mysql"
+    mode: "0640"
+
 - name: "Deploy the Mysql configuration file"
   ansible.builtin.template:
     src: "my.cnf.j2"
