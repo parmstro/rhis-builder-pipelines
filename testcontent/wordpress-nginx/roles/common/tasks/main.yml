@@ -13,11 +13,10 @@
   when: ansible_distribution_major_version == "8"
 
 - name: Ensure repos are available on RHEL 9
+  when: ansible_distribution_major_version >= "9"
   community.general.rhsm_repository:
     name:
-      - "{{ epel9_rpms_repo_name }}"
-      - "{{ epel9_streams_repo_name }}"
-  when: ansible_distribution_major_version == "9"
+      - "{{ epel_rpms_repo_name }}"
 
 - name: Install Firewalld
   ansible.builtin.yum:

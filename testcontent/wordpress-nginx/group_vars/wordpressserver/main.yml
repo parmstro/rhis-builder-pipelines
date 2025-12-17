@@ -3,7 +3,11 @@
 epel8_rpms_repo_name: "Default_Organization_EPEL8_EPEL8"
 epel8_streams_repo_name: "Default_Organization_EPEL8_EPEL8_Stream"
 
-epel7_rpms_repo_name: "Default_Organization_EPEL7_EPEL7"
+epel9_rpms_repo_name: "Default_Organization_EPEL9_EPEL9"
+epel9_streams_repo_name: "Default_Organization_EPEL9_EPEL9_Stream"
+
+epel10_rpms_repo_name: "Default_Organization_EPEL10_EPEL10"
+epel10_streams_repo_name: "Default_Organization_EPEL10_EPEL10_Stream"
 
 wp_version: "6.7.1"
 wp_url: "https://en-ca.wordpress.org/wordpress-{{ wp_version }}-en_CA.tar.gz"

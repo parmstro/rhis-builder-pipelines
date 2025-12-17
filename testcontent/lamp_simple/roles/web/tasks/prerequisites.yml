@@ -35,8 +35,6 @@
     permanent: true
     immediate: true
     state: "enabled"
-  vars:
-    python_interpreter: "/usr/bin/python39"
 
 - name: "Ensure http service state"
   ansible.builtin.service:
