@@ -6,7 +6,8 @@
   ansible.builtin.dnf:
     name:
       - "mariadb-server"
-      - "MySQL-python"
+      - "mariadb-server-utils"
+      - "python3-PyMySQL"
     state: "present"
 
 - name: Install MariaDB AppStreams for RHEL 8
