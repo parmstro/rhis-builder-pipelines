@@ -3,7 +3,7 @@
 - name: "Ensure that the log file exists"
   ansible.builtin.file:
     name: "/var/log/mysqld.log"
-    state: present
+    state: touch
     owner: "mysql"
     group: "mysql"
     mode: "0640"
