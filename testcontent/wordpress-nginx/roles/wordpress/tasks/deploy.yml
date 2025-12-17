@@ -21,10 +21,10 @@
     name: "{{ wp_db_name }}"
     check_implicit_admin: true
     login_user: "root"
-    login_unix_socket: "/var/lib/mysql/mysql.sock"
+    login_unix_socket: "/var/run/mysqld/mysqld.sock"
     config_file: "/etc/my.cnf"
     state: present
- 
+
 - name: "Create WordPress database user"
   community.mysql.mysql_user:
     name: "{{ wp_db_user }}"
