@@ -3,5 +3,5 @@
 
 - name: "Restart jboss"
   ansible.builtin.service:
-    name: "eap7-standalone"
+    name: "{{ jboss_eap_service }}"
     state: "restarted"
