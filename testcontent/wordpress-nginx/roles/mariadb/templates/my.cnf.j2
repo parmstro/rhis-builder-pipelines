@@ -4,7 +4,7 @@ socket=/var/run/mysqld/mysqld.sock
 user=mysql
 # Disabling symbolic-links is recommended to prevent assorted security risks
 symbolic-links=0
-bind-address = {{ mysql_bind_address_ipv4 }}
+bind-address={{ mysql_bind_address_ipv4 }}
 port={{ mysql_port }}
 
 [mysqld_safe]
