@@ -1,17 +1,34 @@
 ---
 
-- name: "Install MariaDB AppStream"
+- name: "Install MariaDB packages for RHEL9"
+  when: ansible_distribution_major_version == "9"
   ansible.builtin.dnf:
     name:
-      - "@mariadb:10.11/server"
-      - "python39-PyMySQL"
-      - "php-mysqlnd"
+      - "mariadb-server"
+      - "mariadb-server-utils"
+      - "python3-PyMySQL"
+      - "python3-firewall"
     state: "present"
 
-- name: "Ensure python3-PyMySQL is really, really there. Because apparently its not"
-  ansible.builtin.command: "pip3 install PyMySQL"
-  register: pip_result
-  changed_when: pip_result.rc == 0
+- name: Install MariaDB AppStreams for RHEL 8
+  when: ansible_distribution_major_version == "8"
+  ansible.builtin.dnf:
+    name:
+      - "@mariadb:10.3/server"
+    state: present
+
+- name: Ensure firewalld has been started in order to add rules
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "started"
+    enabled: true
+
+- name: "Add firewall rule for mysql port {{ mysql_port }}"
+  ansible.posix.firewalld:
+    port: "{{ mysql_port }}/{{ mysql_port_protocol }}"
+    permanent: true
+    immediate: true
+    state: "enabled"
 
 - name: "Configure SELinux to allow mysql port {{ mysql_port }}"
   when: ansible_distribution_major_version == "8"
@@ -30,44 +47,3 @@
         proto: "tcp"
         setype: "mysqld_port_t"
         state: "present"
-
-
-- name: "Ensure the proper log directory"
-  ansible.builtin.file:
-    path: "/var/log/mysqld/"
-    state: "directory"
-    owner: "mysql"
-    group: "mysql"
-    mode: "0644"
-
-- name: "Ensure the proper pid directory"
-  ansible.builtin.file:
-    path: "/var/run/mysqld/"
-    state: "directory"
-    owner: "mysql"
-    group: "mysql"
-    mode: "0644"
-
-- name: "Ensure MariaDB Service starts at boot"
-  ansible.builtin.service:
-    name: "mariadb"
-    state: "started"
-    enabled: true
-
-- name: "Ensure firewalld running"
-  ansible.builtin.service:
-    name: "firewalld"
-    state: "started"
-    enabled: true
-
-- name: Ensure python3-firewall is installed
-  ansible.builtin.dnf:
-    name: python3-firewall
-    state: present
-
-- name: "Add firewall rules"
-  ansible.posix.firewalld:
-    port: "{{ mysql_port }}/tcp"
-    permanent: true
-    immediate: true
-    state: "enabled"

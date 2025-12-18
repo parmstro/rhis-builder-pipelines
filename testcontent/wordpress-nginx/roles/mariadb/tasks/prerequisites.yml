@@ -17,14 +17,6 @@
       - "@mariadb:10.3/server"
     state: present
 
-# # - name: Ensure Python3 is the default python on RHEL8 because sample app is old
-# #   ansible.builtin.command: "alternatives --set python /usr/bin/python3"
-# #   when: ansible_distribution_major_version == "8"
-# - name: Install python3-PyMySQL
-#   ansible.builtin.command: "pip3 install PyMySQL"
-#   register: pip_result
-#   changed_when: pip_result.rc == 0
-
 - name: Ensure firewalld has been started in order to add rules
   ansible.builtin.service:
     name: "firewalld"
