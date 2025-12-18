@@ -16,6 +16,12 @@
   changed_when: wp_salt.rc == 0
   delegate_to: localhost
 
+- name: "Ensure that MariaDB Service is enabled and running"
+  ansible.builtin.service:
+    name: "mariadb"
+    state: "started"
+    enabled: true
+
 - name: "Create WordPress database"
   community.mysql.mysql_db:
     name: "{{ wp_db_name }}"
@@ -35,6 +41,12 @@
     config_file: "/etc/my.cnf.d/mariadb-server.cnf"
     priv: "{{ wp_db_name }}.*:ALL"
     state: present
+
+- name: "Ensure that MariaDB Service is restarted"
+  ansible.builtin.service:
+    name: "mariadb"
+    state: "restarted"
+    enabled: true
 
 - name: "Copy WordPress config file"
   ansible.builtin.template:
