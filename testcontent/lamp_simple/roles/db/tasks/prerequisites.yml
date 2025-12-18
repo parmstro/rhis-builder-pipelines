@@ -33,7 +33,7 @@
 - name: "Configure SELinux to allow mysql port {{ mysql_port }}"
   when: ansible_distribution_major_version == "8"
   ansible.builtin.command:
-    cmd: "semanage port -a -t mysqld_port_t -p tcp {{ mysql_port }}"
+    cmd: "semanage port -a -t mysqld_port_t -p {{ mysql_port_protocol }} {{ mysql_port }}"
   register: seport_result
   changed_when: seport_result.rc == 0
 
@@ -44,6 +44,6 @@
   vars:
     selinux_ports:
       - ports: "{{ mysql_port }}"
-        proto: "tcp"
+        proto: "{{ mysql_port_protocol }}"
         setype: "mysqld_port_t"
         state: "present"
