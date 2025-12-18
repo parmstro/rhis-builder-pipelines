@@ -21,8 +21,8 @@
     name: "{{ wp_db_name }}"
     check_implicit_admin: true
     login_user: "root"
-    login_unix_socket: "/var/run/mysqld/mysqld.sock"
-    config_file: "/etc/my.cnf"
+    login_unix_socket: "/var/lib/mysql/mysql.sock"
+    config_file: "/etc/my.cnf.d/mariadb-server.cnf"
     state: present
 
 - name: "Create WordPress database user"

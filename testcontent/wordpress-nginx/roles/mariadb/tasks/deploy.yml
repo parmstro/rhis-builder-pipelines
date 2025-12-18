@@ -2,7 +2,7 @@
 
 - name: "Ensure that the log file exists"
   ansible.builtin.file:
-    name: "/var/log/mysqld.log"
+    name: "/var/log/mariadb/mariadb.log"
     state: touch
     owner: "mysql"
     group: "mysql"
@@ -19,7 +19,7 @@
 - name: "Deploy the Mysql configuration file"
   ansible.builtin.template:
     src: "my.cnf.j2"
-    dest: "/etc/my.cnf"
+    dest: "/etc/my.cnf.d/mariadb-server.cnf"
     mode: "0644"
 
 - name: "Ensure that MariaDB Service is enabled and running"
