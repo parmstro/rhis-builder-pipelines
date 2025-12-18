@@ -61,21 +61,18 @@
       $dbconnect = mysqli_connect('{{ target_ip }}', '{{ hostvars[ansible_fqdn].mysql_username }}', '{{ hostvars[ansible_fqdn].mysql_password }}', 'nation') or die(mysqli_connect_error($dbconnect));
       $query = mysqli_query($dbconnect, "SELECT C.name,  C.country_code2,  C.area, CS.population, CS.gdp, CS.population/C.area as density, CS.gdp/CS.population as gdp_density, CS.year FROM countries C  INNER JOIN country_stats CS ON C.country_id = CS.country_id  WHERE CS.year = (SELECT max(year) FROM country_stats);")
       or die (mysqli_error($dbconnect));
- 
-      setlocale(LC_MONETARY,"en_US");
-      
+   
       while ($row = mysqli_fetch_array($query)) {
       echo
       "<tr>
         <td>". $row['name'] . "</td>
         <td align=right>" . $row['area'] . "</td>:
-	      <td align=right>" . $row['population'] . "</td>
-        <td align=right>" . money_format('%.2n',$row['gdp']) . "</td>
+        <td align=right>" . $row['population'] . "</td>
+        <td align=right>" . number_format($row['gdp'], 2, '.', ',') . "</td>
         <td align=right>" . $row['density'] . "</td>
-        <td align=right>" . money_format('%.2n',$row['gdp_density']) . "</td>
+        <td align=right>" . number_format($row['gdp_density'], 2, '.', ',') . "</td>
         <td align=right>" . $row['year'] . "</td>
       </tr>\n";
-
       }
 
       ?>

@@ -41,6 +41,7 @@
   community.mysql.mysql_user:
     name: "{{ mysql_username }}"
     password: "{{ mysql_password }}"
+    host: "{{ ansible_fqdn }}"
     check_implicit_admin: true
     login_user: "root"
     login_unix_socket: "/var/lib/mysql/mysql.sock"
@@ -72,4 +73,3 @@
     name: "mariadb"
     state: "restarted"
     enabled: true
-
