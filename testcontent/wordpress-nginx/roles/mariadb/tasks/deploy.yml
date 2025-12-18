@@ -8,6 +8,7 @@
     group: "mysql"
     mode: "0640"
 
+# If switch the socket to a more secure directory
 - name: "Ensure that the runtime directory exists"
   ansible.builtin.file:
     name: "/var/run/mysqld/"
