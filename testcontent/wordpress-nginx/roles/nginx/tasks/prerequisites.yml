@@ -19,10 +19,20 @@
     immediate: true
     state: "enabled"
 
-- name: "Set the selinux booleans for nginx"
+- name: "Set the selinux booleans for nginx - httpd_can_network_connect"
   ansible.posix.seboolean:
-    name:
-      - "httpd_can_network_relay"
-      - "httpd_can_network_connect"
-      - "httpd_graceful_shutdown"
+    name: "httpd_can_network_connect"
     state: true
+    persistent: true
+
+- name: "Set the selinux booleans for nginx - httpd_can_network_relay"
+  ansible.posix.seboolean:
+    name: "httpd_can_network_relay"
+    state: true
+    persistent: true
+    
+- name: "Set the selinux booleans for nginx - httpd_graceful_shutdown"
+  ansible.posix.seboolean:
+    name: "httpd_graceful_shutdown"
+    state: true
+    persistent: true
