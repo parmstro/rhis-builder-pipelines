@@ -18,3 +18,12 @@
     permanent: true
     immediate: true
     state: "enabled"
+
+- name: "Set the selinux booleans for nginx"
+  ansible.posix.seboolean:
+    name:
+      - "httpd_can_network_relay"
+      - "httpd_can_network_connect"
+      - "httpd_graceful_shutdown"
+    state: true
+    persistent: true

@@ -50,9 +50,11 @@
       register: default_weblog_page
 
     - name: "Check for Site Name supplied in config"
-      when: default_weblog_page.content is not search(wp_weblog_title)
-      ansible.builtin.fail:
-        msg: "Site Check Failed - could not access default weblog {{ wp_weblog_title }}"
+      ansible.builtin.assert:
+        that:
+          - default_weblog_page.content is search(wp_weblog_title)
+        success_msg: "All Assertions Passed! Site is available."
+        fail_msg: "Site Check Failed - could not access default weblog {{ wp_weblog_title }}"
 
     - name: "Log test results"
       ansible.builtin.debug:
