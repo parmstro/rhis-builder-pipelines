@@ -26,4 +26,3 @@
       - "httpd_can_network_connect"
       - "httpd_graceful_shutdown"
     state: true
-    persistent: true
