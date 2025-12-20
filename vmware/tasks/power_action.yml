@@ -20,7 +20,7 @@
     power_action_force: true
 
 - name: "Power Action is setting power state: {{ power_action_target_state }} for host: {{ host.name }}" # noqa: name[template]
-  vmware.vmware.vmware_guest_powerstate:
+  vmware.vmware.vm_powerstate:
     hostname: "{{ vcenter_hostname }}"
     username: "{{ vcenter_username }}"
     password: "{{ vcenter_password }}"
