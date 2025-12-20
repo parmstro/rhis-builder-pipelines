@@ -3,7 +3,7 @@
 
 - name: "Snapshot Action is setting snapshot state: {{ snapshot_target_state }} for host: {{ host.name }}" # noqa: name[template]
   
-  community.vmware.vmware_guest_snapshot:
+  vmware.vmware.vmware_guest_snapshot:
     hostname: "{{ vcenter_hostname }}"
     username: "{{ vcenter_username }}"
     password: "{{ vcenter_password }}"

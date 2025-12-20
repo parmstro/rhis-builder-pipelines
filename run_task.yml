@@ -1,9 +1,12 @@
 ---
+
+# run a specified task
+
 - name: "Run Task"
   hosts: all
   become: true
   gather_facts: true
-
+  
   tasks:
 
     - name: "Load the vault variables"
@@ -25,6 +28,11 @@
       when: vars_dir is defined
       ansible.builtin.include_vars:
         dir: "{{ vars_dir }}"
+    
+    - name: "Load the other variables"
+      when: task_path is not defined
+      ansible.builtin.set_fact:
+        task_path: "tasks"
 
     - name: "Run task - {{ task_name }}"
-      ansible.builtin.include_tasks: tasks/{{ task_name }}.yml
+      ansible.builtin.include_tasks: "{{ task_path }}/{{ task_name }}.yml

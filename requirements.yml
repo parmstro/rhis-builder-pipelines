@@ -9,7 +9,7 @@ collections:
   - name: "ansible.hub"
   - name: "community.general"
   - name: "community.mysql"
-  - name: "community.vmware"
+  - name: "vmware.vmware"
   - name: "redhat.satellite"
     version: ">=5.0"
   - name: "redhat.rhel_system_roles"
