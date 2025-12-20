@@ -35,5 +35,5 @@
 - name: "If we quiesed the system, wait for it to respond"
   when: host.quiesce
   ansible.builtin.wait_for_connection:
-    delay: "{{ post_quiesce_delay_seconds }}"
+    delay: "{{ post_quiesce_delay_seconds | default(15) }}"
     timeout: 300
