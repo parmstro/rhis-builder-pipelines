@@ -5,14 +5,14 @@
   ansible.builtin.set_fact:
     power_action_force: false
 
-- name: Find Guest's Folder using name
-  vmware.vmware.vmware_guest_find:
-    hostname: "{{ vcenter_hostname }}"
-    username: "{{ vcenter_username }}"
-    password: "{{ vcenter_password }}"
-    name: "{{ host.name }}"
-    validate_certs: "{{ vmware_validate_certs }}"
-  register: vm_folder
+# - name: Find Guest's Folder using name
+#   community.vmware.vmware_guest_find:
+#     hostname: "{{ vcenter_hostname }}"
+#     username: "{{ vcenter_username }}"
+#     password: "{{ vcenter_password }}"
+#     name: "{{ host.name }}"
+#     validate_certs: "{{ vmware_validate_certs }}"
+#   register: vm_folder
 
 - name: "Set state"
   when: power_action_target_state == "powered-on"
