@@ -11,6 +11,8 @@
     datacenter: "{{ datacenter_name }}"
     folder: "{{ datacenter_folder }}"
     name: "{{ host.name }}"
+    remove_all: "{{ snapshot_target_remove_all | default(omit) }}"
+    remove_children: "{{ snapshot_target_remove_children | default(omit) }}"
     state: "{{ snapshot_target_state }}"
     snapshot_name: "{{ host.snap_name | default(omit) }}"
     description: "{{ host.snap_description | default(omit) }}"
