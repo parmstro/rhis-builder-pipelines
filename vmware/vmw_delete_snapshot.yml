@@ -3,7 +3,7 @@
 
 - name: Delete the snapshots for the list of hosts
   hosts: provisioner
-  
+
   vars:
     snapshot_target_state: "absent"
 

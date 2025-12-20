@@ -2,7 +2,7 @@
 
 - name: "Restart the Virtual Machine for the list of vmware hosts"
   hosts: provisioner
-  
+
   vars:
     power_action_target_state: "restarted"
 
