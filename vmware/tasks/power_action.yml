@@ -1,25 +1,7 @@
 ---
 # Perform the power action
 # one of powered-off, powered-on, reboot-guest, restarted, shutdown-guest, suspended, present (default == powered-on)
-- name: "Set environment. Target power state: {{ power_action_target_state }}"
-  ansible.builtin.set_fact:
-    power_action_force: false
-
-# - name: Find Guest's Folder using name
-#   community.vmware.vmware_guest_find:
-#     hostname: "{{ vcenter_hostname }}"
-#     username: "{{ vcenter_username }}"
-#     password: "{{ vcenter_password }}"
-#     name: "{{ host.name }}"
-#     validate_certs: "{{ vmware_validate_certs }}"
-#   register: vm_folder
-
-- name: "Set state"
-  when:
-    - power_action_target_state == "powered-on"
-    - power_action_target_state == "reboot-guest"
-  ansible.builtin.set_fact:
-    power_action_force: true
+# power_action_force: true | false
 
 - name: "Power Action is setting power state: {{ power_action_target_state }} for host: {{ host.name }}" # noqa: name[template]
   vmware.vmware.vm_powerstate:
@@ -30,5 +12,5 @@
     folder: "{{ datacenter_folder }}"
     name: "{{ host.name }}"
     state: "{{ power_action_target_state }}"
-    force: "{{ power_action_force }}"
+    force: "{{ power_action_force | default(false) }}"
     validate_certs: "{{ vmware_validate_certs }}"
