@@ -5,8 +5,6 @@ collections:
     version: ">=8.0"
   - name: ansible.utils
     version: ">=6.0"
-  - name: ansible.controller
-    version: ">=4.7"
   - name: ansible.hub
     version: ">=1.0"
   - name: community.mysql
