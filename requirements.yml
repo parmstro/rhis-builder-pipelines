@@ -12,7 +12,6 @@ collections:
   - name: vmware.vmware
     version: ">=2.7"
   - name: redhat.rhel_system_roles
-    version: ">=1.120"
   - name: community.general
     version: ">=7.0"
   - name: ansible.posix
