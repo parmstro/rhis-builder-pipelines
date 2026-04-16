@@ -15,8 +15,6 @@ collections:
     version: ">=7.0"
   - name: ansible.posix
     version: ">=2.1"
-  - name: redhat.satellite
-    version: ">=5.7"
   - name: infra.ah_configuration
     version: ">=2.1"
   - name: infra.leapp
