@@ -1,3 +1,5 @@
 *.code-workspace
 host_vars/*parmstrong.ca*
 parmstrong.ca*
+.vscode/
+.claude/
