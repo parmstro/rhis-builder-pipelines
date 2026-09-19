@@ -73,7 +73,7 @@
 
         - name: "Select the first available discovered host"
           ansible.builtin.set_fact:
-            target: "{{ available_hosts.results | json_query('[].targethost.ansible_facts') | list | first }}"
+            target: "{{ available_hosts.results | map(attribute='targethost.ansible_facts') | first }}"
 
         - name: "Set the build values"
           ansible.builtin.set_fact:
