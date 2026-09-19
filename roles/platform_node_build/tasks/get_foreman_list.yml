@@ -20,7 +20,7 @@
 
     - name: "Parse the results"
       ansible.builtin.set_fact:
-        gfl_list: "{{ results.resources | json_query('[*].name') }}"
+        gfl_list: "{{ results.resources | map(attribute='name') | list }}"
 
     - name: "Assign named result"
       ansible.builtin.set_fact:
