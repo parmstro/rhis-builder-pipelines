@@ -9,29 +9,47 @@
     username: "{{ vcenter_username }}"
     password: "{{ vcenter_password }}"
     datacenter: "{{ datacenter_name }}"
+    description: "{{ host.snap_description | default(omit) }}"
     folder: "{{ datacenter_folder }}"
+    folder_paths_are_absolute: "{{ datacenter_folder_paths_are_absolute | default(omit) }}"  # defaults to false underneath
+    memory_dump: "{{ host.memory_dump | default(omit) }}" # defaults to false underneath
+    moid: "{{ host.moid | default(omit) }}"
     name: "{{ host.name }}"
+    name_match: "{{ host.name_match | default(omit) }}"
+    new_snapshot_name: "{{ host.new_snap_name | default(omit) }}"
+    port: "{{ vcenter_port | default(omit) }}" # default is 443
+    proxy_host: "{{ vcenter_proxy_host | default(omit) }}"
+    proxy_port: "{{ vcenter_proxy_port | default(omit) }}"
+    quiesce: "{{ host.quiesce | default(omit) }}"
     remove_all: "{{ snapshot_target_remove_all | default(omit) }}"
     remove_children: "{{ snapshot_target_remove_children | default(omit) }}"
-    state: "{{ snapshot_target_state }}"
     snapshot_name: "{{ host.snap_name | default(omit) }}"
-    description: "{{ host.snap_description | default(omit) }}"
-    quiesce: "{{ host.quiesce | default(omit) }}"
+    state: "{{ snapshot_target_state }}"
+    timeout: "{{ host.timeout | default(omit) }}"
+    use_instance_uuid: "{{ host.use_instance_uuid | default(omit) }}"
+    uuid: "{{ host.uuid | default(omit) }}"
     validate_certs: "{{ vmware_validate_certs }}"
 
 - name: "Snapshot Action is setting snapshot state: {{ snapshot_target_state }} for host: {{ host.name }}" # noqa: name[template]
   when: snapshot_target_state == "revert"
-  community.vmware.vmware_guest_snapshot:
+  vmware.vmware.vmware_snapshot_revert:
     hostname: "{{ vcenter_hostname }}"
     username: "{{ vcenter_username }}"
     password: "{{ vcenter_password }}"
     datacenter: "{{ datacenter_name }}"
-    folder: "{{ datacenter_folder }}"
+    folder: "{{ datacenter_folder }}"    # required if using name
+    folder_paths_are_absolute: "{{ datacenter_folder_paths_are_absolute | default(omit) }}"  # defaults to false underneath
+    moid: "{{ host.moid | default(omit) }}"
     name: "{{ host.name }}"
-    state: "{{ snapshot_target_state }}"
+    name_match: "{{ host.name_match | default(omit) }}"
+    port: "{{ vcenter_port | default(omit) }}" # default is 443
+    proxy_host: "{{ vcenter_proxy_host | default(omit) }}"
+    proxy_port: "{{ vcenter_proxy_port | default(omit) }}"
+    snapshot_id: "{{ host.snap_id | default(omit) }}"
     snapshot_name: "{{ host.snap_name | default(omit) }}"
-    description: "{{ host.snap_description | default(omit) }}"
-    quiesce: "{{ host.quiesce | default(omit) }}"
+    suppress_power_on: "{{ host.suppress_power_on | default(omit) }}"
+    use_instance_uuid: "{{ host.use_instance_uuid | default(omit) }}"
+    uuid: "{{ host.uuid | default(omit) }}"
     validate_certs: "{{ vmware_validate_certs }}"
 
 - name: "If we quiesed the system, wait for it to respond"
