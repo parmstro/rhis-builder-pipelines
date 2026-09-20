@@ -32,7 +32,7 @@
 
 - name: "Snapshot Action is setting snapshot state: {{ snapshot_target_state }} for host: {{ host.name }}" # noqa: name[template]
   when: snapshot_target_state == "revert"
-  vmware.vmware.vmware_snapshot_revert:
+  vmware.vmware.vm_snapshot_revert:
     hostname: "{{ vcenter_hostname }}"
     username: "{{ vcenter_username }}"
     password: "{{ vcenter_password }}"
