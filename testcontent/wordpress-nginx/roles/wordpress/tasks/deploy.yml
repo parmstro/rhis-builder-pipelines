@@ -30,7 +30,7 @@
     return_content: true
   register: wp_salts
   when: wp_salts_exist.rc != 0
-  # not delegating to loca host - each host fetches unique salts
+  delegate_to: localhost  # needs delegation because template is rendered on the controller
 
 - name: "Ensure that MariaDB Service is enabled and running"
   ansible.builtin.service:
