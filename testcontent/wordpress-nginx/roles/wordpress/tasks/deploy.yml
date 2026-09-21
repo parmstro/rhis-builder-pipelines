@@ -32,10 +32,15 @@
   when: wp_salts_exist.rc != 0
   delegate_to: localhost  # needs delegation because template is rendered on the controller
 
-- name: "Debug: Show the fetched salts"
+- name: "Try to get the contents."
+  ansible.builtin.set_fact:
+    salts_content: "{{ wp_salts.content }}"
+  delegate_to: localhost
+
+- name: "Show the fetched salts"
   ansible.builtin.debug:
-    var: wp_salts
-  when: wp_salts_exist.rc != 0
+    var: salts_content
+  delegate_to: localhost
 
 - name: "Ensure that MariaDB Service is enabled and running"
   ansible.builtin.service:
