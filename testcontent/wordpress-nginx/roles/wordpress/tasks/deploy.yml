@@ -23,7 +23,7 @@
   register: wp_salts_exist
   failed_when: false
   changed_when: false
-      
+
 - name: Fetch WordPress salts from API
   ansible.builtin.uri:
     url: https://api.wordpress.org/secret-key/1.1/salt/
@@ -31,6 +31,11 @@
   register: wp_salts
   when: wp_salts_exist.rc != 0
   delegate_to: localhost  # needs delegation because template is rendered on the controller
+
+- name: "Debug: Show the fetched salts"
+  ansible.builtin.debug:
+    var: wp_salts
+  when: wp_salts_exist.rc != 0
 
 - name: "Ensure that MariaDB Service is enabled and running"
   ansible.builtin.service:
