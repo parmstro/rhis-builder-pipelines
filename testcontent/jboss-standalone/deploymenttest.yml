@@ -9,6 +9,15 @@
 
   tasks:
 
+    - name: "Wait for web service to be up"
+      ansible.builtin.uri:
+        url: "http://{{ ansible_fqdn }}:{{ http_port }}/kitchensink/index.jsf"
+        status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 30        # How many times to try
+      delay: 10      
+    
     - name: "GET the kitchensink"
       ansible.builtin.uri:
         url: "http://{{ ansible_fqdn }}:{{ http_port }}/kitchensink/index.jsf"
