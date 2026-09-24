@@ -22,3 +22,10 @@
           The application can be found at the following URLs:"
           "https://{{ ansible_fqdn }}:{{ https_port }}/{{ sample_app_dir }}"
           "http://{{ ansible_fqdn }}:{{ http_port }}/{{ sample_app_dir }}"
+
+    - name: "Wait for the JBoss server to be up and running"
+      ansible.builtin.wait_for:
+        host: "{{ ansible_fqdn }}"
+        port: "{{ https_port }}"
+        delay: 10
+        timeout: 300
