@@ -27,7 +27,7 @@ wp_db_password: "{{ vault_wp_db_password }}"
 # These are the WordPress default weblog settings
 wp_weblog_title: "SampleSite"
 wp_user_name: "anonuser"
-wp_admin_password: "S33kr8"
+wp_admin_password: "{{ vault_wp_admin_password }}"
 wp_allow_weak_pass: true
 wp_admin_email: "joeuser@parmstrong.ca"
 wp_blog_public: false
