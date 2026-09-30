@@ -2,4 +2,4 @@
 
 vault_wp_db_name: wordpressdb    # not-secret
 vault_wp_db_user: wpuser         # not-secret
-# vault_wp_db_password and vault_wp_admin_password are injected via the rhis_wordpress_operator AAP credential type
+# wp_db_password_vault and wp_admin_password_vault are injected via the rhis_wordpress_operator AAP credential type

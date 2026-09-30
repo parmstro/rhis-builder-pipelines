@@ -22,12 +22,12 @@ mysql_port_protocol: "tcp"
 # These are the WordPress database settings
 wp_db_name: "{{ vault_wp_db_name }}"
 wp_db_user: "{{ vault_wp_db_user }}"
-wp_db_password: "{{ vault_wp_db_password }}"
+wp_db_password: "{{ wp_db_password_vault }}"
 
 # These are the WordPress default weblog settings
 wp_weblog_title: "SampleSite"
 wp_user_name: "anonuser"
-wp_admin_password: "{{ vault_wp_admin_password }}"
+wp_admin_password: "{{ wp_admin_password_vault }}"
 wp_allow_weak_pass: true
 wp_admin_email: "joeuser@parmstrong.ca"
 wp_blog_public: false
