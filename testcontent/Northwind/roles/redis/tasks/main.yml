@@ -1,0 +1,30 @@
+---
+
+- name: "Install Redis"
+  ansible.builtin.dnf:
+    name:
+      - redis
+    state: present
+
+- name: "Deploy Redis configuration"
+  ansible.builtin.template:
+    src: redis.conf.j2
+    dest: /etc/redis/redis.conf
+    owner: redis
+    group: redis
+    mode: "0640"
+  notify: restart redis
+
+- name: "Enable and start Redis"
+  ansible.builtin.service:
+    name: redis
+    state: started
+    enabled: true
+
+- name: "Open firewall for Redis"
+  ansible.posix.firewalld:
+    port: "{{ redis_port }}/tcp"
+    state: enabled
+    immediate: true
+    permanent: true
+...

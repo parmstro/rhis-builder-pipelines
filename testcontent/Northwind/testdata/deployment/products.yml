@@ -1,0 +1,18 @@
+---
+# Product seed data validation for deployment testing
+
+test_cases:
+
+  - name: "Seed products are present"
+    type: positive
+    endpoint: "/northwind/api/products/"
+    method: GET
+    expected:
+      status_code: 200
+      min_count: 10
+      contains_records:
+        - name: "Chai"
+        - name: "Chang"
+        - name: "Ikura"
+        - name: "Tofu"
+...

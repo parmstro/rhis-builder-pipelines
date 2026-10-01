@@ -1,0 +1,29 @@
+---
+# Build and configure the Northwind Django application tier.
+# Standalone playbook for workflow-driven deployment.
+# Requires PostgreSQL and Redis tiers to be running.
+
+- name: "Deploy Django application on Apache"
+  hosts: nw_appservers
+  become: true
+
+  roles:
+    - common
+    - django_app
+
+  tasks:
+    - name: "Place a fingerprint file on the app server"
+      ansible.builtin.file:
+        path: "{{ app_fingerprint_dir }}/django_app.deployed"
+        state: "touch"
+        mode: "0644"
+
+    - name: "Wait for Apache to serve the application"
+      ansible.builtin.uri:
+        url: "http://{{ ansible_fqdn }}:{{ app_http_port }}/northwind/api/health/"
+        status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 30
+      delay: 10
+...

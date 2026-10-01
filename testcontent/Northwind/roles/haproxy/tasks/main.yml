@@ -1,0 +1,44 @@
+---
+
+- name: "Install HAProxy"
+  ansible.builtin.dnf:
+    name:
+      - haproxy
+    state: present
+
+- name: "Deploy HAProxy configuration"
+  ansible.builtin.template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+    owner: root
+    group: root
+    mode: "0644"
+    validate: "haproxy -c -f %s"
+  notify: restart haproxy
+
+- name: "Set SELinux boolean for HAProxy"
+  ansible.posix.seboolean:
+    name: haproxy_connect_any
+    state: true
+    persistent: true
+
+- name: "Enable and start HAProxy"
+  ansible.builtin.service:
+    name: haproxy
+    state: started
+    enabled: true
+
+- name: "Open firewall for HAProxy frontend"
+  ansible.posix.firewalld:
+    port: "{{ haproxy_frontend_port }}/tcp"
+    state: enabled
+    immediate: true
+    permanent: true
+
+- name: "Open firewall for HAProxy stats"
+  ansible.posix.firewalld:
+    port: "{{ haproxy_stats_port }}/tcp"
+    state: enabled
+    immediate: true
+    permanent: true
+...

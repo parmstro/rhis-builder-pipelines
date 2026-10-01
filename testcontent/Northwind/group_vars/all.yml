@@ -1,0 +1,31 @@
+---
+# Northwind application - shared variables
+# These defaults are overridden by the AAP job template variables at runtime.
+
+# Application identity
+app_name: "northwind"
+app_fingerprint_dir: "/opt/northwind/.deployed"
+
+# PostgreSQL
+postgresql_port: 5432
+postgresql_db_name: "northwind"
+postgresql_app_user: "northwind_app"
+postgresql_app_password: "{{ northwind_db_password_vault }}"
+postgresql_bind_address: "0.0.0.0"
+
+# Redis
+redis_port: 6379
+redis_bind_address: "0.0.0.0"
+
+# Django / Apache
+app_http_port: 8080
+django_app_root: "/opt/northwind/app"
+django_secret_key: "{{ northwind_django_secret_vault }}"
+django_settings_module: "northwind.settings"
+
+# HAProxy
+haproxy_frontend_port: 80
+haproxy_stats_port: 8404
+haproxy_stats_user: "admin"
+haproxy_stats_password: "{{ northwind_haproxy_stats_password_vault }}"
+...

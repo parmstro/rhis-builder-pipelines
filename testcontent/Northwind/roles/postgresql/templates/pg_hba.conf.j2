@@ -1,0 +1,13 @@
+# PostgreSQL Client Authentication Configuration File
+# Managed by Ansible - do not edit manually
+
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+local   all             postgres                                peer
+local   all             all                                     peer
+host    all             all             127.0.0.1/32            md5
+host    all             all             ::1/128                 md5
+
+# Application access
+{% for entry in postgresql_hba_entries %}
+{{ entry.type }}    {{ entry.database }}    {{ entry.user }}    {{ entry.address }}    {{ entry.method }}
+{% endfor %}

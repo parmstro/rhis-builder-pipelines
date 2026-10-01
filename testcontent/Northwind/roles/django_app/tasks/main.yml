@@ -1,0 +1,94 @@
+---
+
+- name: "Install system packages"
+  ansible.builtin.dnf:
+    name:
+      - httpd
+      - python3
+      - python3-pip
+      - python3-devel
+      - python3-mod_wsgi
+      - postgresql-devel
+      - gcc
+    state: present
+
+- name: "Create application directory"
+  ansible.builtin.file:
+    path: "{{ django_app_root }}"
+    state: directory
+    owner: apache
+    group: apache
+    mode: "0755"
+
+- name: "Create Python virtual environment"
+  ansible.builtin.command:
+    cmd: "python3 -m venv {{ django_venv_path }}"
+    creates: "{{ django_venv_path }}/bin/activate"
+
+- name: "Install Python dependencies"
+  ansible.builtin.pip:
+    name:
+      - django
+      - psycopg2
+      - django-redis
+      - gunicorn
+    virtualenv: "{{ django_venv_path }}"
+    state: present
+
+- name: "Deploy Django application code"
+  ansible.builtin.copy:
+    src: app/
+    dest: "{{ django_app_root }}/"
+    owner: apache
+    group: apache
+    mode: "0644"
+    directory_mode: "0755"
+  notify: restart httpd
+
+- name: "Deploy Django configuration templates"
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: apache
+    group: apache
+    mode: "0644"
+  loop:
+    - src: settings.py.j2
+      dest: "{{ django_app_root }}/northwind/settings.py"
+    - src: urls.py.j2
+      dest: "{{ django_app_root }}/northwind/urls.py"
+    - src: wsgi.py.j2
+      dest: "{{ django_app_root }}/northwind/wsgi.py"
+  notify: restart httpd
+
+- name: "Deploy Apache configuration"
+  ansible.builtin.template:
+    src: northwind-httpd.conf.j2
+    dest: /etc/httpd/conf.d/northwind.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart httpd
+
+- name: "Set SELinux booleans for httpd"
+  ansible.posix.seboolean:
+    name: "{{ item }}"
+    state: true
+    persistent: true
+  loop:
+    - httpd_can_network_connect
+    - httpd_can_network_connect_db
+
+- name: "Enable and start Apache"
+  ansible.builtin.service:
+    name: httpd
+    state: started
+    enabled: true
+
+- name: "Open firewall for application"
+  ansible.posix.firewalld:
+    port: "{{ app_http_port }}/tcp"
+    state: enabled
+    immediate: true
+    permanent: true
+...

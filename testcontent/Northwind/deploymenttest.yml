@@ -1,0 +1,48 @@
+---
+# Northwind deployment smoke test
+# Data-driven: test cases defined in testdata/deployment/
+# Validates each tier is running and the full request path works end-to-end.
+
+- name: "Test Northwind Deployment"
+  hosts: nw_lbservers
+  gather_facts: true
+
+  vars:
+    base_url: "http://{{ ansible_fqdn }}:{{ haproxy_frontend_port }}"
+    testdata_dir: "{{ playbook_dir }}/testdata/deployment"
+
+  tasks:
+
+    - name: "Wait for HAProxy to be serving"
+      ansible.builtin.uri:
+        url: "{{ base_url }}/northwind/api/health/"
+        status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 30
+      delay: 10
+
+    - name: "Run health check tests"
+      ansible.builtin.include_tasks: tasks/run_test_cases.yml
+      vars:
+        test_suite_file: "{{ testdata_dir }}/health.yml"
+
+    - name: "Run category validation tests"
+      ansible.builtin.include_tasks: tasks/run_test_cases.yml
+      vars:
+        test_suite_file: "{{ testdata_dir }}/categories.yml"
+
+    - name: "Run product validation tests"
+      ansible.builtin.include_tasks: tasks/run_test_cases.yml
+      vars:
+        test_suite_file: "{{ testdata_dir }}/products.yml"
+
+    - name: "Run customer CRUD tests"
+      ansible.builtin.include_tasks: tasks/run_test_cases.yml
+      vars:
+        test_suite_file: "{{ testdata_dir }}/customers.yml"
+
+    - name: "Deployment test complete"
+      ansible.builtin.debug:
+        msg: "All deployment tests passed - Northwind application is functional"
+...

@@ -1,0 +1,16 @@
+---
+# Health endpoint test cases for deployment validation
+
+test_cases:
+
+  - name: "All tiers report healthy"
+    type: positive
+    endpoint: "/northwind/api/health/"
+    method: GET
+    expected:
+      status_code: 200
+      response:
+        database: "ok"
+        cache: "ok"
+        application: "ok"
+...

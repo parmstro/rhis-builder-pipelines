@@ -1,0 +1,21 @@
+# Apache configuration for Northwind Django application
+# Managed by Ansible - do not edit manually
+
+Listen {{ app_http_port }}
+
+<VirtualHost *:{{ app_http_port }}>
+    ServerName {{ ansible_fqdn }}
+
+    WSGIDaemonProcess northwind python-home={{ django_venv_path }} python-path={{ django_app_root }} processes={{ django_wsgi_processes }} threads={{ django_wsgi_threads }}
+    WSGIProcessGroup northwind
+    WSGIScriptAlias /northwind {{ django_app_root }}/northwind/wsgi.py process-group=northwind
+
+    <Directory {{ django_app_root }}/northwind>
+        <Files wsgi.py>
+            Require all granted
+        </Files>
+    </Directory>
+
+    ErrorLog /var/log/httpd/northwind-error.log
+    CustomLog /var/log/httpd/northwind-access.log combined
+</VirtualHost>

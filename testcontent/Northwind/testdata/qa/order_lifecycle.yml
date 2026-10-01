@@ -1,0 +1,144 @@
+---
+# Full order lifecycle test cases for QA validation
+
+test_cases:
+
+  # --- Customer creation for order tests ---
+
+  - name: "Create QA test customer"
+    type: positive
+    endpoint: "/northwind/api/customers/"
+    method: POST
+    register_as: qa_customer
+    input:
+      company_name: "QA Lifecycle Corp"
+      contact_name: "QA Lifecycle Tester"
+      contact_title: "Test Manager"
+      address: "200 Quality Ave"
+      city: "Toronto"
+      region: "ON"
+      postal_code: "M5V 2T6"
+      country: "Canada"
+      phone: "416-555-0200"
+    expected:
+      status_code: 201
+      response:
+        company_name: "QA Lifecycle Corp"
+        city: "Toronto"
+
+  # --- Order creation ---
+
+  - name: "Create order with single line item"
+    type: positive
+    endpoint: "/northwind/api/orders/"
+    method: POST
+    use_ref: qa_customer
+    register_as: qa_order_single
+    input:
+      customer_id: "{{ ref.qa_customer.id }}"
+      order_date: "2026-09-26"
+      required_date: "2026-10-10"
+      ship_city: "Toronto"
+      ship_region: "ON"
+      ship_country: "Canada"
+      order_details:
+        - product_id: 1
+          unit_price: "18.00"
+          quantity: 5
+          discount: 0
+    expected:
+      status_code: 201
+      response:
+        ship_city: "Toronto"
+        ship_country: "Canada"
+      response_has_key: order_details
+
+  - name: "Create order with multiple line items"
+    type: positive
+    endpoint: "/northwind/api/orders/"
+    method: POST
+    use_ref: qa_customer
+    register_as: qa_order_multi
+    input:
+      customer_id: "{{ ref.qa_customer.id }}"
+      order_date: "2026-09-26"
+      required_date: "2026-10-15"
+      ship_city: "Vancouver"
+      ship_region: "BC"
+      ship_country: "Canada"
+      order_details:
+        - product_id: 1
+          unit_price: "18.00"
+          quantity: 10
+          discount: 0
+        - product_id: 2
+          unit_price: "19.00"
+          quantity: 5
+          discount: "0.05"
+        - product_id: 8
+          unit_price: "31.00"
+          quantity: 3
+          discount: 0
+    expected:
+      status_code: 201
+      response:
+        ship_city: "Vancouver"
+
+  # --- Order retrieval and verification ---
+
+  - name: "Retrieve single-item order"
+    type: positive
+    endpoint: "/northwind/api/orders/{{ ref.qa_order_single.id }}/"
+    method: GET
+    use_ref: qa_order_single
+    expected:
+      status_code: 200
+      response:
+        ship_city: "Toronto"
+        ship_country: "Canada"
+
+  - name: "Retrieve customer orders shows both orders"
+    type: positive
+    endpoint: "/northwind/api/customers/{{ ref.qa_customer.id }}/orders/"
+    method: GET
+    use_ref: qa_customer
+    expected:
+      status_code: 200
+      min_count: 2
+
+  # --- Negative order tests ---
+
+  - name: "Reject order for non-existent customer"
+    type: negative
+    endpoint: "/northwind/api/orders/"
+    method: POST
+    input:
+      customer_id: 99999
+      order_date: "2026-09-26"
+      ship_city: "Nowhere"
+    expected:
+      status_code: 404
+      response:
+        error: "Customer not found"
+
+  - name: "Reject order missing customer_id"
+    type: negative
+    endpoint: "/northwind/api/orders/"
+    method: POST
+    input:
+      order_date: "2026-09-26"
+      ship_city: "Somewhere"
+    expected:
+      status_code: 400
+      response:
+        error: "Missing required field: customer_id"
+
+  - name: "GET non-existent order returns 404"
+    type: negative
+    endpoint: "/northwind/api/orders/99999/"
+    method: GET
+    expected:
+      status_code: 404
+      response:
+        error: "Order not found"
+...

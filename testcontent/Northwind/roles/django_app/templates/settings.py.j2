@@ -1,0 +1,53 @@
+# Django settings for Northwind application
+# Managed by Ansible - do not edit manually
+
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+SECRET_KEY = '{{ django_secret_key }}'
+
+DEBUG = False
+
+ALLOWED_HOSTS = ['*']
+
+INSTALLED_APPS = [
+    'django.contrib.contenttypes',
+    'django.contrib.auth',
+    'northwind.api',
+]
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.middleware.common.CommonMiddleware',
+]
+
+ROOT_URLCONF = 'northwind.urls'
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': '{{ postgresql_db_name }}',
+        'USER': '{{ postgresql_app_user }}',
+        'PASSWORD': '{{ postgresql_app_password }}',
+        'HOST': '{{ groups["nw_dbservers"][0] }}',
+        'PORT': '{{ postgresql_port }}',
+    }
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://{{ groups["nw_cacheservers"][0] }}:{{ redis_port }}/0',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
+
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
+USE_TZ = True

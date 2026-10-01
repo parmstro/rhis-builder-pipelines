@@ -1,0 +1,92 @@
+---
+# Customer CRUD test cases for deployment validation
+
+test_cases:
+
+  - name: "Create valid customer with all fields"
+    type: positive
+    endpoint: "/northwind/api/customers/"
+    method: POST
+    input:
+      company_name: "DeployTest Corp"
+      contact_name: "Deploy Tester"
+      contact_title: "QA Engineer"
+      address: "100 Test Lane"
+      city: "Ottawa"
+      region: "ON"
+      postal_code: "K1A 0B1"
+      country: "Canada"
+      phone: "613-555-0100"
+    expected:
+      status_code: 201
+      response:
+        company_name: "DeployTest Corp"
+        contact_name: "Deploy Tester"
+        city: "Ottawa"
+        country: "Canada"
+
+  - name: "Create customer with minimum required fields"
+    type: positive
+    endpoint: "/northwind/api/customers/"
+    method: POST
+    input:
+      company_name: "MinimalTest Inc"
+    expected:
+      status_code: 201
+      response:
+        company_name: "MinimalTest Inc"
+
+  - name: "Reject customer missing company_name"
+    type: negative
+    endpoint: "/northwind/api/customers/"
+    method: POST
+    input:
+      contact_name: "No Company User"
+      city: "Toronto"
+    expected:
+      status_code: 400
+      response:
+        error: "Missing required field: company_name"
+
+  - name: "Reject empty POST body"
+    type: negative
+    endpoint: "/northwind/api/customers/"
+    method: POST
+    input: {}
+    expected:
+      status_code: 400
+      response:
+        error: "Missing required field: company_name"
+
+  - name: "Retrieve existing seed customer"
+    type: positive
+    endpoint: "/northwind/api/customers/"
+    method: GET
+    expected:
+      status_code: 200
+      min_count: 1
+      contains_records:
+        - company_name: "Alfreds Futterkiste"
+          contact_name: "Maria Anders"
+        - company_name: "Bottom-Dollar Markets"
+          city: "Tsawassen"
+          country: "Canada"
+
+  - name: "GET non-existent customer returns 404"
+    type: negative
+    endpoint: "/northwind/api/customers/99999/"
+    method: GET
+    expected:
+      status_code: 404
+      response:
+        error: "Customer not found"
+
+  - name: "DELETE non-existent customer returns 404"
+    type: negative
+    endpoint: "/northwind/api/customers/99999/"
+    method: DELETE
+    expected:
+      status_code: 404
+      response:
+        error: "Customer not found"
+...

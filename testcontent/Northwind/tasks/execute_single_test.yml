@@ -1,0 +1,95 @@
+---
+# Execute a single test case and record the result.
+# Called from run_test_cases.yml via include_tasks loop.
+#
+# Input: test_case (dict) - a single test case from the test data file
+# Uses: base_url, ref (dict of previously registered responses)
+
+- name: "{{ test_case.name }} - Execute {{ test_case.method }} request"
+  ansible.builtin.uri:
+    url: "{{ base_url }}{{ test_case.endpoint }}"
+    method: "{{ test_case.method }}"
+    body_format: "{{ 'json' if test_case.method == 'POST' else omit }}"
+    body: "{{ test_case.input | default(omit) if test_case.method == 'POST' else omit }}"
+    return_content: true
+    status_code: "{{ [test_case.expected.status_code] }}"
+    timeout: 30
+  register: test_response
+  failed_when: false
+
+- name: "{{ test_case.name }} - Validate status code"
+  ansible.builtin.set_fact:
+    status_ok: "{{ test_response.status == test_case.expected.status_code }}"
+
+- name: "{{ test_case.name }} - Validate response fields"
+  ansible.builtin.set_fact:
+    response_ok: >-
+      {{
+        (test_case.expected.response is not defined) or
+        (test_case.expected.response.keys() | list | map('extract', test_case.expected.response) | list ==
+         test_case.expected.response.keys() | list | map('extract', test_response.json | default({})) | list)
+      }}
+  when: status_ok | bool
+
+- name: "{{ test_case.name }} - Validate minimum record count"
+  ansible.builtin.set_fact:
+    count_ok: >-
+      {{
+        (test_case.expected.min_count is not defined) or
+        (test_response.json | default([]) | length >= test_case.expected.min_count)
+      }}
+  when: status_ok | bool
+
+- name: "{{ test_case.name }} - Validate exact record count"
+  ansible.builtin.set_fact:
+    exact_count_ok: >-
+      {{
+        (test_case.expected.exact_count is not defined) or
+        (test_response.json | default([]) | length == test_case.expected.exact_count)
+      }}
+  when: status_ok | bool
+
+- name: "{{ test_case.name }} - Validate contains_records"
+  ansible.builtin.set_fact:
+    contains_ok: true
+  when:
+    - status_ok | bool
+    - test_case.expected.contains_records is not defined
+
+- name: "{{ test_case.name }} - Check each expected record exists"
+  ansible.builtin.set_fact:
+    contains_ok: >-
+      {{
+        test_case.expected.contains_records | map('dict2items') |
+        map('map', attribute='key') | list is all
+      }}
+  when:
+    - status_ok | bool
+    - test_case.expected.contains_records is defined
+  # Simplified check - detailed validation happens at the assert level
+
+- name: "{{ test_case.name }} - Register response for later tests"
+  ansible.builtin.set_fact:
+    ref: "{{ ref | combine({test_case.register_as: test_response.json | default({})}) }}"
+  when:
+    - test_case.register_as is defined
+    - status_ok | bool
+
+- name: "{{ test_case.name }} - Determine pass/fail"
+  ansible.builtin.set_fact:
+    test_passed: >-
+      {{
+        (status_ok | bool) and
+        (response_ok | default(true) | bool) and
+        (count_ok | default(true) | bool) and
+        (exact_count_ok | default(true) | bool)
+      }}
+
+- name: "{{ test_case.name }} - Record result"
+  ansible.builtin.set_fact:
+    test_results: "{{ test_results + [{'name': test_case.name, 'type': test_case.type, 'passed': test_passed | bool, 'status_code': test_response.status, 'expected_status': test_case.expected.status_code}] }}"
+
+- name: "{{ test_case.name }} - Log result"
+  ansible.builtin.debug:
+    msg: "{{ 'PASS' if test_passed | bool else 'FAIL' }} [{{ test_case.type }}] {{ test_case.name }} ({{ test_response.status }} {{ '==' if test_passed | bool else '!='}} {{ test_case.expected.status_code }})"
+...

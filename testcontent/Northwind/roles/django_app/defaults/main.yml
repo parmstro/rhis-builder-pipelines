@@ -1,0 +1,8 @@
+---
+app_http_port: 8080
+django_app_root: "/opt/northwind/app"
+django_venv_path: "/opt/northwind/venv"
+django_settings_module: "northwind.settings"
+django_wsgi_processes: 2
+django_wsgi_threads: 15
+...

@@ -1,0 +1,8 @@
+# Northwind URL configuration
+# Managed by Ansible - do not edit manually
+
+from django.urls import path, include
+
+urlpatterns = [
+    path('northwind/api/', include('northwind.api.urls')),
+]

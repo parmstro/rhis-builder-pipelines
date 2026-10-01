@@ -1,0 +1,31 @@
+---
+# Build and configure the Northwind HAProxy load balancer tier.
+# Standalone playbook for workflow-driven deployment.
+# Requires Django application tier to be running.
+
+- name: "Deploy and configure HAProxy load balancer"
+  hosts: nw_lbservers
+  become: true
+
+  roles:
+    - common
+    - haproxy
+
+  tasks:
+    - name: "Place a fingerprint file on the load balancer"
+      ansible.builtin.file:
+        path: "{{ app_fingerprint_dir }}/haproxy.deployed"
+        state: "touch"
+        mode: "0644"
+
+    - name: "Wait for HAProxy to accept connections"
+      ansible.builtin.wait_for:
+        host: "{{ ansible_fqdn }}"
+        port: "{{ haproxy_frontend_port }}"
+        delay: 5
+        timeout: 120
+
+    - name: "Display the application URL"
+      ansible.builtin.debug:
+        msg: "Northwind application available at http://{{ ansible_fqdn }}:{{ haproxy_frontend_port }}/northwind/"
+...
