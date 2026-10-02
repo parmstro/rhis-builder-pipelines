@@ -18,7 +18,7 @@
 - name: "Enable and start Redis"
   ansible.builtin.service:
     name: redis
-    state: started
+    state: restarted
     enabled: true
 
 - name: "Open firewall for Redis"

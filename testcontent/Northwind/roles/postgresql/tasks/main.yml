@@ -39,7 +39,7 @@
 - name: "Enable and start PostgreSQL"
   ansible.builtin.service:
     name: postgresql
-    state: started
+    state: restarted
     enabled: true
 
 - name: "Open firewall for PostgreSQL"

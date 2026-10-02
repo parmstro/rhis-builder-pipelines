@@ -25,7 +25,7 @@
 - name: "Enable and start HAProxy"
   ansible.builtin.service:
     name: haproxy
-    state: started
+    state: restarted
     enabled: true
 
 - name: "Open firewall for HAProxy frontend"
