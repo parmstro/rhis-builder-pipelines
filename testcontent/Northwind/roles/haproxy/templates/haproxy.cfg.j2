@@ -38,7 +38,7 @@ backend northwind_back
     option httpchk GET /northwind/api/health/
     http-check expect status 200
 {% for host in groups['nw_appservers'] %}
-    server {{ hostvars[host]['ansible_hostname'] }} {{ host }}:{{ haproxy_backend_port }} check inter 5s rise 2 fall 3
+    server {{ host.split('.')[0] }} {{ host }}:{{ haproxy_backend_port }} check inter 5s rise 2 fall 3
 {% endfor %}
 
 listen stats
