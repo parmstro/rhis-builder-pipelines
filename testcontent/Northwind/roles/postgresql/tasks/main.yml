@@ -63,11 +63,17 @@
     owner: "{{ postgresql_app_user }}"
     state: present
 
+- name: "Copy SQL scripts to database server"
+  ansible.builtin.copy:
+    src: "sql/"
+    dest: "/tmp/northwind_sql/"
+    mode: "0644"
+
 - name: "Load Northwind schema"
   become_user: postgres
   community.postgresql.postgresql_script:
     login_db: "{{ postgresql_db_name }}"
-    path: "{{ role_path }}/files/sql/schema.sql"
+    path: "/tmp/northwind_sql/schema.sql"
   register: schema_load
   changed_when: schema_load.changed
 
@@ -75,9 +81,14 @@
   become_user: postgres
   community.postgresql.postgresql_script:
     login_db: "{{ postgresql_db_name }}"
-    path: "{{ role_path }}/files/sql/seed_data.sql"
+    path: "/tmp/northwind_sql/seed_data.sql"
   register: seed_load
   changed_when: seed_load.changed
+
+- name: "Clean up SQL scripts"
+  ansible.builtin.file:
+    path: "/tmp/northwind_sql"
+    state: absent
 
 - name: "Grant privileges to application user"
   become_user: postgres
