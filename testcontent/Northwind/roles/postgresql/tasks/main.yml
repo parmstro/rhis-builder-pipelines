@@ -66,7 +66,7 @@
 - name: "Load Northwind schema"
   become_user: postgres
   community.postgresql.postgresql_script:
-    db: "{{ postgresql_db_name }}"
+    login_db: "{{ postgresql_db_name }}"
     path: "{{ role_path }}/files/sql/schema.sql"
   register: schema_load
   changed_when: schema_load.changed
@@ -74,7 +74,7 @@
 - name: "Load Northwind seed data"
   become_user: postgres
   community.postgresql.postgresql_script:
-    db: "{{ postgresql_db_name }}"
+    login_db: "{{ postgresql_db_name }}"
     path: "{{ role_path }}/files/sql/seed_data.sql"
   register: seed_load
   changed_when: seed_load.changed
@@ -82,7 +82,7 @@
 - name: "Grant privileges to application user"
   become_user: postgres
   community.postgresql.postgresql_privs:
-    db: "{{ postgresql_db_name }}"
+    login_db: "{{ postgresql_db_name }}"
     role: "{{ postgresql_app_user }}"
     objs: ALL_IN_SCHEMA
     privs: SELECT,INSERT,UPDATE,DELETE
