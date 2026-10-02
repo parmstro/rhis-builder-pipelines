@@ -90,7 +90,7 @@
     path: "/tmp/northwind_sql"
     state: absent
 
-- name: "Grant privileges to application user"
+- name: "Grant table privileges to application user"
   become_user: postgres
   community.postgresql.postgresql_privs:
     login_db: "{{ postgresql_db_name }}"
@@ -98,4 +98,13 @@
     objs: ALL_IN_SCHEMA
     privs: SELECT,INSERT,UPDATE,DELETE
     type: table
+
+- name: "Grant sequence privileges to application user"
+  become_user: postgres
+  community.postgresql.postgresql_privs:
+    login_db: "{{ postgresql_db_name }}"
+    role: "{{ postgresql_app_user }}"
+    objs: ALL_IN_SCHEMA
+    privs: USAGE,SELECT
+    type: sequence
 ...
