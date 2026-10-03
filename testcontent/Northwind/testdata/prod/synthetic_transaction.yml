@@ -1,0 +1,82 @@
+---
+# Synthetic transaction test cases for production validation
+# All test data uses identifiable prefixes for cleanup.
+# Tests are non-destructive - synthetic records are created and then deleted.
+
+synthetic_prefix: "PRODTEST"
+
+test_cases:
+
+  - name: "Health check - all tiers"
+    type: positive
+    endpoint: "/northwind/api/health/"
+    method: GET
+    expected:
+      status_code: 200
+      response:
+        database: "ok"
+        cache: "ok"
+        application: "ok"
+
+  - name: "Read path - categories accessible"
+    type: positive
+    endpoint: "/northwind/api/categories/"
+    method: GET
+    expected:
+      status_code: 200
+      min_count: 1
+
+  - name: "Read path - products accessible"
+    type: positive
+    endpoint: "/northwind/api/products/"
+    method: GET
+    expected:
+      status_code: 200
+      min_count: 1
+
+  - name: "Write path - create synthetic customer"
+    type: positive
+    endpoint: "/northwind/api/customers/"
+    method: POST
+    register_as: synthetic_customer
+    input:
+      company_name: "PRODTEST_SyntheticCo"
+      contact_name: "Production Validator"
+      contact_title: "Synthetic"
+      city: "Synthetic"
+      country: "Synthetic"
+      phone: "000-000-0000"
+    expected:
+      status_code: 201
+      response:
+        company_name: "PRODTEST_SyntheticCo"
+
+  - name: "Read-after-write - verify synthetic customer"
+    type: positive
+    endpoint: "/northwind/api/customers/ref:synthetic_customer.id/"
+    method: GET
+    use_ref: synthetic_customer
+    expected:
+      status_code: 200
+      response:
+        company_name: "PRODTEST_SyntheticCo"
+        contact_name: "Production Validator"
+
+  - name: "Cleanup - delete synthetic customer"
+    type: positive
+    endpoint: "/northwind/api/customers/ref:synthetic_customer.id/"
+    method: DELETE
+    use_ref: synthetic_customer
+    expected:
+      status_code: 204
+
+  - name: "Verify cleanup - synthetic customer gone"
+    type: negative
+    endpoint: "/northwind/api/customers/ref:synthetic_customer.id/"
+    method: GET
+    use_ref: synthetic_customer
+    expected:
+      status_code: 404
+      response:
+        error: "Customer not found"
+...

@@ -1,0 +1,50 @@
+# HAProxy configuration for Northwind application
+# Managed by Ansible - do not edit manually
+
+global
+    log         /dev/log local0
+    chroot      /var/lib/haproxy
+    pidfile     /var/run/haproxy.pid
+    maxconn     4000
+    user        haproxy
+    group       haproxy
+    daemon
+    stats socket /var/lib/haproxy/stats
+
+defaults
+    mode                    http
+    log                     global
+    option                  httplog
+    option                  dontlognull
+    option                  http-server-close
+    option                  forwardfor except 127.0.0.0/8
+    retries                 3
+    timeout http-request    10s
+    timeout queue           1m
+    timeout connect         10s
+    timeout client          1m
+    timeout server          1m
+    timeout http-keep-alive 10s
+    timeout check           10s
+    maxconn                 3000
+
+frontend northwind_front
+    bind *:{{ haproxy_frontend_port }}
+    default_backend northwind_back
+    option forwardfor
+
+backend northwind_back
+    balance roundrobin
+    option httpchk GET /northwind/api/health/
+    http-check expect status 200
+{% for host in groups['nw_appservers'] %}
+    server {{ host.split('.')[0] }} {{ host }}:{{ haproxy_backend_port }} check inter 5s rise 2 fall 3
+{% endfor %}
+
+listen stats
+    bind *:{{ haproxy_stats_port }}
+    stats enable
+    stats uri /stats
+    stats refresh 10s
+    stats auth {{ haproxy_stats_user }}:{{ haproxy_stats_password }}
+    stats admin if LOCALHOST

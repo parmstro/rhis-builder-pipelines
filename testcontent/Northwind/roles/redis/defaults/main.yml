@@ -1,0 +1,6 @@
+---
+redis_port: 6379
+redis_bind_address: "0.0.0.0"
+redis_maxmemory: "128mb"
+redis_maxmemory_policy: "allkeys-lru"
+...

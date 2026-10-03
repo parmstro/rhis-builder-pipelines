@@ -1,0 +1,22 @@
+# Sample local inventory for development/testing
+# In production, this is provided by the dedicated AAP inventory
+# (SOE_northwind_pipeline_inventory) with namespaced groups.
+# Job templates target this inventory without a limit since it is app-specific.
+
+[nw_lbservers]
+# testnorthwindlb1.example.ca
+
+[nw_appservers]
+# testnorthwindapp1.example.ca
+
+[nw_dbservers]
+# testnorthwinddb1.example.ca
+
+[nw_cacheservers]
+# testnorthwindcache1.example.ca
+
+[Northwind:children]
+nw_lbservers
+nw_appservers
+nw_dbservers
+nw_cacheservers

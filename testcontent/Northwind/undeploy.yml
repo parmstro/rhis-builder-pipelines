@@ -1,0 +1,144 @@
+---
+# Undeploy the Northwind application stack.
+# Reverse order from deployment: HAProxy -> Django App -> Redis -> PostgreSQL
+
+- name: "Remove HAProxy load balancer configuration"
+  hosts: nw_lbservers
+  become: true
+
+  tasks:
+    - name: "Check for deployment fingerprint"
+      ansible.builtin.stat:
+        path: "{{ app_fingerprint_dir }}/haproxy.deployed"
+      register: haproxy_fingerprint
+
+    - name: "Undeploy HAProxy"
+      when: haproxy_fingerprint.stat.exists
+      block:
+        - name: "Stop HAProxy service"
+          ansible.builtin.service:
+            name: haproxy
+            state: stopped
+            enabled: false
+
+        - name: "Close firewall ports"
+          ansible.posix.firewalld:
+            port: "{{ port_protocol }}"
+            state: disabled
+            immediate: true
+            permanent: true
+          loop:
+            - "{{ haproxy_frontend_port }}/tcp"
+            - "{{ haproxy_stats_port }}/tcp"
+          loop_control:
+            loop_var: port_protocol
+
+        - name: "Remove fingerprint"
+          ansible.builtin.file:
+            path: "{{ app_fingerprint_dir }}/haproxy.deployed"
+            state: absent
+
+- name: "Remove Django application"
+  hosts: nw_appservers
+  become: true
+
+  tasks:
+    - name: "Check for deployment fingerprint"
+      ansible.builtin.stat:
+        path: "{{ app_fingerprint_dir }}/django_app.deployed"
+      register: app_fingerprint
+
+    - name: "Undeploy Django application"
+      when: app_fingerprint.stat.exists
+      block:
+        - name: "Stop Apache service"
+          ansible.builtin.service:
+            name: httpd
+            state: stopped
+            enabled: false
+
+        - name: "Close firewall ports"
+          ansible.posix.firewalld:
+            port: "{{ app_http_port }}/tcp"
+            state: disabled
+            immediate: true
+            permanent: true
+
+        - name: "Remove application files"
+          ansible.builtin.file:
+            path: "{{ django_app_root }}"
+            state: absent
+
+        - name: "Remove fingerprint"
+          ansible.builtin.file:
+            path: "{{ app_fingerprint_dir }}/django_app.deployed"
+            state: absent
+
+- name: "Remove Redis cache"
+  hosts: nw_cacheservers
+  become: true
+
+  tasks:
+    - name: "Check for deployment fingerprint"
+      ansible.builtin.stat:
+        path: "{{ app_fingerprint_dir }}/redis.deployed"
+      register: redis_fingerprint
+
+    - name: "Undeploy Redis"
+      when: redis_fingerprint.stat.exists
+      block:
+        - name: "Stop Redis service"
+          ansible.builtin.service:
+            name: redis
+            state: stopped
+            enabled: false
+
+        - name: "Close firewall ports"
+          ansible.posix.firewalld:
+            port: "{{ redis_port }}/tcp"
+            state: disabled
+            immediate: true
+            permanent: true
+
+        - name: "Remove fingerprint"
+          ansible.builtin.file:
+            path: "{{ app_fingerprint_dir }}/redis.deployed"
+            state: absent
+
+- name: "Remove PostgreSQL database"
+  hosts: nw_dbservers
+  become: true
+
+  tasks:
+    - name: "Check for deployment fingerprint"
+      ansible.builtin.stat:
+        path: "{{ app_fingerprint_dir }}/postgresql.deployed"
+      register: postgresql_fingerprint
+
+    - name: "Undeploy PostgreSQL"
+      when: postgresql_fingerprint.stat.exists
+      block:
+        - name: "Drop the Northwind database"
+          become_user: postgres
+          community.postgresql.postgresql_db:
+            name: "{{ postgresql_db_name }}"
+            state: absent
+
+        - name: "Drop the application database user"
+          become_user: postgres
+          community.postgresql.postgresql_user:
+            name: "{{ postgresql_app_user }}"
+            state: absent
+
+        - name: "Close firewall ports"
+          ansible.posix.firewalld:
+            port: "{{ postgresql_port }}/tcp"
+            state: disabled
+            immediate: true
+            permanent: true
+
+        - name: "Remove fingerprint"
+          ansible.builtin.file:
+            path: "{{ app_fingerprint_dir }}/postgresql.deployed"
+            state: absent
+...

@@ -1,0 +1,24 @@
+# Redis configuration
+# Managed by Ansible - do not edit manually
+
+bind {{ redis_bind_address }}
+port {{ redis_port }}
+protected-mode yes
+
+daemonize no
+supervised systemd
+
+loglevel notice
+logfile /var/log/redis/redis.log
+
+databases 16
+
+maxmemory {{ redis_maxmemory }}
+maxmemory-policy {{ redis_maxmemory_policy }}
+
+save 900 1
+save 300 10
+save 60 10000
+
+dir /var/lib/redis
+dbfilename dump.rdb

@@ -1,0 +1,11 @@
+# WSGI config for Northwind application
+# Managed by Ansible - do not edit manually
+
+import os
+import sys
+
+sys.path.insert(0, '{{ django_app_root }}')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', '{{ django_settings_module }}')
+
+from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()

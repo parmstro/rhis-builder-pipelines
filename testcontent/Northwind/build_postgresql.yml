@@ -1,0 +1,26 @@
+---
+# Build and configure the Northwind PostgreSQL database tier.
+# Standalone playbook for workflow-driven deployment.
+
+- name: "Deploy and configure PostgreSQL database"
+  hosts: nw_dbservers
+  become: true
+
+  roles:
+    - common
+    - postgresql
+
+  tasks:
+    - name: "Place a fingerprint file on the database server"
+      ansible.builtin.file:
+        path: "{{ app_fingerprint_dir }}/postgresql.deployed"
+        state: "touch"
+        mode: "0644"
+
+    - name: "Wait for PostgreSQL to accept connections"
+      ansible.builtin.wait_for:
+        host: "{{ ansible_fqdn }}"
+        port: "{{ postgresql_port }}"
+        delay: 5
+        timeout: 120
+...

@@ -1,0 +1,26 @@
+---
+# Build and configure the Northwind Redis cache tier.
+# Standalone playbook for workflow-driven deployment.
+
+- name: "Deploy and configure Redis cache"
+  hosts: nw_cacheservers
+  become: true
+
+  roles:
+    - common
+    - redis
+
+  tasks:
+    - name: "Place a fingerprint file on the cache server"
+      ansible.builtin.file:
+        path: "{{ app_fingerprint_dir }}/redis.deployed"
+        state: "touch"
+        mode: "0644"
+
+    - name: "Wait for Redis to accept connections"
+      ansible.builtin.wait_for:
+        host: "{{ ansible_fqdn }}"
+        port: "{{ redis_port }}"
+        delay: 5
+        timeout: 120
+...

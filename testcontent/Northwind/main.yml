@@ -1,0 +1,14 @@
+---
+# Full Northwind multi-tier application stack deployment.
+# Executes all tier builds in dependency order.
+#
+# For workflow-driven deployment, use individual tier playbooks:
+#   build_postgresql.yml, build_redis.yml   (parallel - no interdependency)
+#   build_django.yml                        (requires postgresql + redis)
+#   build_haproxy.yml                       (requires django)
+
+- ansible.builtin.import_playbook: build_postgresql.yml
+- ansible.builtin.import_playbook: build_redis.yml
+- ansible.builtin.import_playbook: build_django.yml
+- ansible.builtin.import_playbook: build_haproxy.yml
+...

@@ -1,0 +1,6 @@
+---
+haproxy_frontend_port: 80
+haproxy_stats_port: 8404
+haproxy_stats_user: "admin"
+haproxy_backend_port: "{{ app_http_port | default(8080) }}"
+...

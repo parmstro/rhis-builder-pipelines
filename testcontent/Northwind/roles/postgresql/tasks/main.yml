@@ -1,0 +1,116 @@
+---
+
+- name: "Install PostgreSQL packages"
+  ansible.builtin.dnf:
+    name:
+      - postgresql-server
+      - postgresql
+      - python3-psycopg2
+    state: present
+
+- name: "Check if PostgreSQL is initialized"
+  ansible.builtin.stat:
+    path: "/var/lib/pgsql/data/PG_VERSION"
+  register: pg_data
+
+- name: "Initialize PostgreSQL database"
+  ansible.builtin.command: postgresql-setup --initdb
+  when: not pg_data.stat.exists
+  changed_when: true
+
+- name: "Deploy pg_hba.conf"
+  ansible.builtin.template:
+    src: pg_hba.conf.j2
+    dest: /var/lib/pgsql/data/pg_hba.conf
+    owner: postgres
+    group: postgres
+    mode: "0600"
+  notify: restart postgresql
+
+- name: "Deploy postgresql.conf"
+  ansible.builtin.template:
+    src: postgresql.conf.j2
+    dest: /var/lib/pgsql/data/postgresql.conf
+    owner: postgres
+    group: postgres
+    mode: "0600"
+  notify: restart postgresql
+
+- name: "Enable and start PostgreSQL"
+  ansible.builtin.service:
+    name: postgresql
+    state: restarted
+    enabled: true
+
+- name: "Open firewall for PostgreSQL"
+  ansible.posix.firewalld:
+    port: "{{ postgresql_port }}/tcp"
+    state: enabled
+    immediate: true
+    permanent: true
+
+- name: "Create application database user"
+  become_user: postgres
+  community.postgresql.postgresql_user:
+    name: "{{ postgresql_app_user }}"
+    password: "{{ postgresql_app_password }}"
+    state: present
+
+- name: "Drop existing Northwind database"
+  become_user: postgres
+  community.postgresql.postgresql_db:
+    name: "{{ postgresql_db_name }}"
+    state: absent
+
+- name: "Create Northwind database"
+  become_user: postgres
+  community.postgresql.postgresql_db:
+    name: "{{ postgresql_db_name }}"
+    owner: "{{ postgresql_app_user }}"
+    state: present
+
+- name: "Copy SQL scripts to database server"
+  ansible.builtin.copy:
+    src: "sql/"
+    dest: "/tmp/northwind_sql/"
+    mode: "0644"
+
+- name: "Load Northwind schema"
+  become_user: postgres
+  community.postgresql.postgresql_script:
+    login_db: "{{ postgresql_db_name }}"
+    path: "/tmp/northwind_sql/schema.sql"
+  register: schema_load
+  changed_when: schema_load.changed
+
+- name: "Load Northwind seed data"
+  become_user: postgres
+  community.postgresql.postgresql_script:
+    login_db: "{{ postgresql_db_name }}"
+    path: "/tmp/northwind_sql/seed_data.sql"
+  register: seed_load
+  changed_when: seed_load.changed
+
+- name: "Clean up SQL scripts"
+  ansible.builtin.file:
+    path: "/tmp/northwind_sql"
+    state: absent
+
+- name: "Grant table privileges to application user"
+  become_user: postgres
+  community.postgresql.postgresql_privs:
+    login_db: "{{ postgresql_db_name }}"
+    role: "{{ postgresql_app_user }}"
+    objs: ALL_IN_SCHEMA
+    privs: SELECT,INSERT,UPDATE,DELETE
+    type: table
+
+- name: "Grant sequence privileges to application user"
+  become_user: postgres
+  community.postgresql.postgresql_privs:
+    login_db: "{{ postgresql_db_name }}"
+    role: "{{ postgresql_app_user }}"
+    objs: ALL_IN_SCHEMA
+    privs: USAGE,SELECT
+    type: sequence
+...

@@ -1,0 +1,47 @@
+---
+# Northwind Production Validation Test
+# Data-driven: test cases defined in testdata/prod/
+#
+# Used as BOTH a pre-patch gate and post-patch validation.
+# Pre-patch:  "Is the application healthy enough to begin a maintenance window?"
+# Post-patch: "Is the application still healthy and safe to return to production?"
+#
+# Tests are non-destructive - synthetic records are created, verified, and deleted.
+
+- name: "Northwind Production Validation"
+  hosts: nw_lbservers
+  gather_facts: true
+
+  vars:
+    base_url: "http://{{ ansible_fqdn }}:{{ haproxy_frontend_port }}"
+    testdata_dir: "{{ playbook_dir }}/testdata/prod"
+
+  tasks:
+
+    # HAProxy backend validation is infrastructure-level, not data-driven
+    - name: "Check HAProxy stats endpoint"
+      ansible.builtin.uri:
+        url: "http://{{ ansible_fqdn }}:{{ haproxy_stats_port }}/stats;csv"
+        method: GET
+        return_content: true
+        url_username: "{{ haproxy_stats_user }}"
+        url_password: "{{ haproxy_stats_password }}"
+        force_basic_auth: true
+      register: haproxy_stats
+
+    - name: "Assert HAProxy has healthy backends"
+      ansible.builtin.assert:
+        that:
+          - "'UP' in haproxy_stats.content"
+        fail_msg: "HAProxy backend health check failed - backends are not UP"
+
+    # Data-driven tests
+    - name: "Run synthetic transaction tests"
+      ansible.builtin.include_tasks: tasks/run_test_cases.yml
+      vars:
+        test_suite_file: "{{ testdata_dir }}/synthetic_transaction.yml"
+
+    - name: "Production validation complete"
+      ansible.builtin.debug:
+        msg: "All production validation checks passed - system is healthy"
+...

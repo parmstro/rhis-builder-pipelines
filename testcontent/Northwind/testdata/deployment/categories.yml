@@ -1,0 +1,22 @@
+---
+# Category seed data validation for deployment testing
+
+test_cases:
+
+  - name: "Seed categories are present"
+    type: positive
+    endpoint: "/northwind/api/categories/"
+    method: GET
+    expected:
+      status_code: 200
+      min_count: 8
+      contains_records:
+        - name: "Beverages"
+        - name: "Condiments"
+        - name: "Confections"
+        - name: "Dairy Products"
+        - name: "Grains/Cereals"
+        - name: "Meat/Poultry"
+        - name: "Produce"
+        - name: "Seafood"
+...

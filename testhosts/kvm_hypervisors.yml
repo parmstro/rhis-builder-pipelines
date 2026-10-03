@@ -19,7 +19,7 @@ platform_hosts:
         provision: true
         subnet: "{{ _default_subnetname }}"
         mac: "54:b2:03:f1:0b:d2"
-        ip: "192.168.140.41"
+        ip: "192.168.140.141"
       # - type: "interface"
       #   identifier: "{{ _default_child_iface1 }}"
       #   mac: "00:30:18:0c:d5:bf"
@@ -34,7 +34,7 @@ platform_hosts:
       #   managed: true
       #   primary: false
       #   provision: false
-      #   ip: "192.168.142.41"
+      #   ip: "192.168.142.141"
       #   subnet: "{{ _default_bond_subnetname }}"
       #   attached_devices:
       #     - "{{ _default_child_iface1 }}"
@@ -61,7 +61,7 @@ platform_hosts:
         provision: true
         subnet: "{{ _default_subnetname }}"
         mac: "54:b2:03:f1:0b:6a"
-        ip: "192.168.140.42"
+        ip: "192.168.140.142"
       # - type: "interface"
       #   identifier: "{{ _default_child_iface1 }}"
       #   mac: "00:30:18:0c:d5:77"
@@ -76,7 +76,7 @@ platform_hosts:
       #   managed: true
       #   primary: false
       #   provision: false
-      #   ip: "192.168.142.42"
+      #   ip: "192.168.142.142"
       #   subnet: "{{ _default_bond_subnetname }}"
       #   attached_devices:
       #     - "{{ _default_child_iface1 }}"
@@ -103,7 +103,7 @@ platform_hosts:
         provision: true
         subnet: "{{ _default_subnetname }}"
         mac: "54:b2:03:f1:0b:46"
-        ip: "192.168.140.43"
+        ip: "192.168.140.143"
       # - type: "interface"
       #   identifier: "{{ _default_child_iface1 }}"
       #   mac: " 00:30:18:0c:d6:53"
@@ -118,7 +118,7 @@ platform_hosts:
       #   managed: true
       #   primary: false
       #   provision: false
-      #   ip: "192.168.142.43"
+      #   ip: "192.168.142.143"
       #   subnet: "{{ _default_bond_subnetname }}"
       #   attached_devices:
       #     - "{{ _default_child_iface1 }}"
@@ -145,7 +145,7 @@ platform_hosts:
         provision: true
         subnet: "{{ _default_subnetname }}"
         mac: "54:b2:03:f1:00:6f"
-        ip: "192.168.140.44"
+        ip: "192.168.140.144"
       # - type: "interface"
       #   identifier: "{{ _default_child_iface1 }}"
       #   mac: "00:30:18:0c:d5:9d"
@@ -160,7 +160,7 @@ platform_hosts:
       #   managed: true
       #   primary: false
       #   provision: false
-      #   ip: "192.168.142.44"
+      #   ip: "192.168.142.144"
       #   subnet: "{{ _default_bond_subnetname }}"
       #   attached_devices:
       #     - "{{ _default_child_iface1 }}"
@@ -187,7 +187,7 @@ platform_hosts:
         provision: true
         subnet: "{{ _default_subnetname }}"
         mac: "54:b2:03:f1:0b:e3"
-        ip: "192.168.140.45"
+        ip: "192.168.140.145"
       # - type: "interface"
       #   identifier: "{{ _default_child_iface1 }}"
       #   mac: "00:30:18:0c:d5:79"
@@ -202,7 +202,7 @@ platform_hosts:
       #   managed: true
       #   primary: false
       #   provision: false
-      #   ip: "192.168.142.45"
+      #   ip: "192.168.142.145"
       #   subnet: "{{ _default_bond_subnetname }}"
       #   attached_devices:
       #     - "{{ _default_child_iface1 }}"
@@ -229,7 +229,7 @@ platform_hosts:
         provision: true
         subnet: "{{ _default_subnetname }}"
         mac: "54:b2:03:f1:00:cd"
-        ip: "192.168.140.46"
+        ip: "192.168.140.146"
       # - type: "interface"
       #   identifier: "{{ _default_child_iface1 }}"
       #   mac: "00:30:18:0c:d5:99"
@@ -244,7 +244,7 @@ platform_hosts:
       #   managed: true
       #   primary: false
       #   provision: false
-      #   ip: "192.168.142.46"
+      #   ip: "192.168.142.146"
       #   subnet: "{{ _default_bond_subnetname }}"
       #   attached_devices:
       #     - "{{ _default_child_iface1 }}"
@@ -271,7 +271,7 @@ platform_hosts:
         provision: true
         subnet: "{{ _default_subnetname }}"
         mac: "54:b2:03:f1:0b:ef"
-        ip: "192.168.140.47"
+        ip: "192.168.140.147"
       # - type: "interface"
       #   identifier: "{{ _default_child_iface1 }}"
       #   mac: "00:30:18:cd:e4:28"
@@ -286,7 +286,7 @@ platform_hosts:
       #   managed: true
       #   primary: false
       #   provision: false
-      #   ip: "192.168.142.47"
+      #   ip: "192.168.142.147"
       #   subnet: "{{ _default_bond_subnetname }}"
       #   attached_devices:
       #     - "{{ _default_child_iface1 }}"

@@ -1,0 +1,61 @@
+---
+# Data integrity checks for QA validation
+# Validates seed data relationships and referential integrity
+
+test_cases:
+
+  - name: "All seed categories present and intact"
+    type: positive
+    endpoint: "/northwind/api/categories/"
+    method: GET
+    expected:
+      status_code: 200
+      exact_count: 8
+      contains_records:
+        - name: "Beverages"
+          description: "Soft drinks, coffees, teas, beers, and ales"
+        - name: "Seafood"
+          description: "Seaweed and fish"
+
+  - name: "All seed suppliers present"
+    type: positive
+    endpoint: "/northwind/api/suppliers/"
+    method: GET
+    expected:
+      status_code: 200
+      min_count: 8
+      contains_records:
+        - company_name: "Exotic Liquids"
+          city: "London"
+          country: "UK"
+        - company_name: "Tokyo Traders"
+          city: "Tokyo"
+          country: "Japan"
+
+  - name: "Products have valid category and supplier references"
+    type: positive
+    endpoint: "/northwind/api/products/"
+    method: GET
+    expected:
+      status_code: 200
+      min_count: 15
+      all_records_have_keys:
+        - category_id
+        - supplier_id
+        - unit_price
+
+  - name: "Seed customers present with correct data"
+    type: positive
+    endpoint: "/northwind/api/customers/"
+    method: GET
+    expected:
+      status_code: 200
+      min_count: 5
+      contains_records:
+        - company_name: "Alfreds Futterkiste"
+          city: "Berlin"
+          country: "Germany"
+        - company_name: "Around the Horn"
+          city: "London"
+          country: "UK"
+...

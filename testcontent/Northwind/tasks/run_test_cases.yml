@@ -1,0 +1,63 @@
+---
+# Generic test case runner
+# Drives API tests from data files. Supports positive and negative test cases.
+#
+# Required variables:
+#   test_suite_file: path to the testdata YAML file
+#   base_url: the base URL to test against (e.g. http://lb:80)
+#
+# The test data file must define a 'test_cases' list where each case has:
+#   name: descriptive name
+#   type: positive or negative
+#   endpoint: API path
+#   method: GET, POST, DELETE
+#   input: (optional) request body for POST
+#   expected:
+#     status_code: expected HTTP status
+#     response: (optional) key-value pairs that must match in response
+#     min_count: (optional) minimum number of records in response list
+#     exact_count: (optional) exact number of records expected
+#     contains_records: (optional) list of records that must exist in response
+#     all_records_have_keys: (optional) keys every record must have
+#     response_has_key: (optional) key that must exist in response
+#   register_as: (optional) save response under this name for later tests
+#   use_ref: (optional) reference to a previously registered response
+#
+# Reference placeholders:
+#   Use 'ref:NAME.FIELD' in endpoint or input values to reference a previously
+#   registered response. Resolved at execution time, not at file load.
+#   Example: endpoint: "/api/orders/ref:my_order.id/"
+#            customer_id: "ref:my_customer.id"
+
+- name: "Load test suite from {{ test_suite_file }}"
+  ansible.builtin.include_vars:
+    file: "{{ test_suite_file }}"
+    name: test_suite
+
+- name: "Initialize test reference store"
+  ansible.builtin.set_fact:
+    ref: "{{ ref | default({}) }}"
+    test_results: []
+
+- name: "Execute test cases"
+  ansible.builtin.include_tasks: execute_single_test.yml
+  loop: "{{ test_suite.test_cases }}"
+  loop_control:
+    loop_var: test_case
+    label: "{{ test_case.name }}"
+
+- name: "Report test results for {{ test_suite_file | basename }}"
+  ansible.builtin.debug:
+    msg: |
+      Test Suite: {{ test_suite_file | basename }}
+      Total: {{ test_results | length }}
+      Passed: {{ test_results | selectattr('passed') | list | length }}
+      Failed: {{ test_results | rejectattr('passed') | list | length }}
+
+- name: "Fail if any test cases did not pass"
+  ansible.builtin.assert:
+    that:
+      - (test_results | rejectattr('passed') | list | length) == 0
+    fail_msg: >-
+      Failed tests: {{ test_results | rejectattr('passed') | map(attribute='name') | list | join(', ') }}
+...

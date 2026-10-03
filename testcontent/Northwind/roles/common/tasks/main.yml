@@ -1,0 +1,15 @@
+---
+# Common configuration applied to all Northwind nodes
+
+- name: "Ensure fingerprint directory exists"
+  ansible.builtin.file:
+    path: "{{ app_fingerprint_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: "Ensure firewalld is running"
+  ansible.builtin.service:
+    name: firewalld
+    state: started
+    enabled: true
+...
