@@ -56,6 +56,12 @@
     password: "{{ postgresql_app_password }}"
     state: present
 
+- name: "Drop existing Northwind database"
+  become_user: postgres
+  community.postgresql.postgresql_db:
+    name: "{{ postgresql_db_name }}"
+    state: absent
+
 - name: "Create Northwind database"
   become_user: postgres
   community.postgresql.postgresql_db:
