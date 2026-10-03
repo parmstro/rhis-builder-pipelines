@@ -35,7 +35,7 @@ test_cases:
     use_ref: qa_customer
     register_as: qa_order_single
     input:
-      customer_id: "{{ ref.qa_customer.id }}"
+      customer_id: "ref:qa_customer.id"
       order_date: "2026-09-26"
       required_date: "2026-10-10"
       ship_city: "Toronto"
@@ -60,7 +60,7 @@ test_cases:
     use_ref: qa_customer
     register_as: qa_order_multi
     input:
-      customer_id: "{{ ref.qa_customer.id }}"
+      customer_id: "ref:qa_customer.id"
       order_date: "2026-09-26"
       required_date: "2026-10-15"
       ship_city: "Vancouver"
@@ -88,7 +88,7 @@ test_cases:
 
   - name: "Retrieve single-item order"
     type: positive
-    endpoint: "/northwind/api/orders/{{ ref.qa_order_single.id }}/"
+    endpoint: "/northwind/api/orders/ref:qa_order_single.id/"
     method: GET
     use_ref: qa_order_single
     expected:
@@ -99,7 +99,7 @@ test_cases:
 
   - name: "Retrieve customer orders shows both orders"
     type: positive
-    endpoint: "/northwind/api/customers/{{ ref.qa_customer.id }}/orders/"
+    endpoint: "/northwind/api/customers/ref:qa_customer.id/orders/"
     method: GET
     use_ref: qa_customer
     expected:

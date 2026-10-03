@@ -53,7 +53,7 @@ test_cases:
 
   - name: "Read-after-write - verify synthetic customer"
     type: positive
-    endpoint: "/northwind/api/customers/{{ ref.synthetic_customer.id }}/"
+    endpoint: "/northwind/api/customers/ref:synthetic_customer.id/"
     method: GET
     use_ref: synthetic_customer
     expected:
@@ -64,7 +64,7 @@ test_cases:
 
   - name: "Cleanup - delete synthetic customer"
     type: positive
-    endpoint: "/northwind/api/customers/{{ ref.synthetic_customer.id }}/"
+    endpoint: "/northwind/api/customers/ref:synthetic_customer.id/"
     method: DELETE
     use_ref: synthetic_customer
     expected:
@@ -72,7 +72,7 @@ test_cases:
 
   - name: "Verify cleanup - synthetic customer gone"
     type: negative
-    endpoint: "/northwind/api/customers/{{ ref.synthetic_customer.id }}/"
+    endpoint: "/northwind/api/customers/ref:synthetic_customer.id/"
     method: GET
     use_ref: synthetic_customer
     expected:

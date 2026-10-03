@@ -22,6 +22,12 @@
 #     response_has_key: (optional) key that must exist in response
 #   register_as: (optional) save response under this name for later tests
 #   use_ref: (optional) reference to a previously registered response
+#
+# Reference placeholders:
+#   Use 'ref:NAME.FIELD' in endpoint or input values to reference a previously
+#   registered response. Resolved at execution time, not at file load.
+#   Example: endpoint: "/api/orders/ref:my_order.id/"
+#            customer_id: "ref:my_customer.id"
 
 - name: "Load test suite from {{ test_suite_file }}"
   ansible.builtin.include_vars:
