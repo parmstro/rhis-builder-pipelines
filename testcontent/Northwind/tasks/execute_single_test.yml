@@ -5,46 +5,30 @@
 # Input: test_case (dict) - a single test case from the test data file
 # Uses: base_url, ref (dict of previously registered responses)
 
-- name: "{{ test_case.name }} - Resolve references in endpoint"
+- name: "{{ test_case.name }} - Resolve references"
   ansible.builtin.set_fact:
-    _resolved_endpoint: "{{ _ep | trim }}"
+    _tc: "{{ _resolved | from_json }}"
   vars:
-    _ep: >-
-      {% set ns = namespace(result=test_case.endpoint) %}
+    _resolved: >-
+      {% set ns = namespace(result=test_case | to_json) %}
       {% for rname, rdata in ref.items() %}
       {% if rdata is mapping %}
       {% for field, fval in rdata.items() %}
+      {% set ns.result = ns.result | replace('"ref:' ~ rname ~ '.' ~ field ~ '"', fval | to_json) %}
       {% set ns.result = ns.result | replace('ref:' ~ rname ~ '.' ~ field, fval | string) %}
       {% endfor %}
       {% endif %}
       {% endfor %}
       {{ ns.result }}
 
-- name: "{{ test_case.name }} - Resolve references in input"
-  ansible.builtin.set_fact:
-    _resolved_input: "{{ _inp }}"
-  vars:
-    _inp: >-
-      {% set ns = namespace(result={}) %}
-      {% for key, val in (test_case.input | default({})).items() %}
-      {% if val is string and val.startswith('ref:') %}
-      {% set parts = val[4:].split('.') %}
-      {% set ns.result = ns.result | combine({key: ref[parts[0]][parts[1]]}) %}
-      {% else %}
-      {% set ns.result = ns.result | combine({key: val}) %}
-      {% endif %}
-      {% endfor %}
-      {{ ns.result }}
-  when: test_case.input is defined
-
 - name: "{{ test_case.name }} - Execute {{ test_case.method }} request"
   ansible.builtin.uri:
-    url: "{{ base_url }}{{ _resolved_endpoint }}"
-    method: "{{ test_case.method }}"
-    body_format: "{{ 'json' if test_case.method == 'POST' else omit }}"
-    body: "{{ _resolved_input if test_case.method == 'POST' and _resolved_input is defined and _resolved_input | length > 0 else omit }}"
+    url: "{{ base_url }}{{ _tc.endpoint }}"
+    method: "{{ _tc.method }}"
+    body_format: "{{ 'json' if _tc.method == 'POST' else omit }}"
+    body: "{{ _tc.input | default(omit) if _tc.method == 'POST' else omit }}"
     return_content: true
-    status_code: "{{ [test_case.expected.status_code] }}"
+    status_code: "{{ [_tc.expected.status_code] }}"
     timeout: 30
   register: test_response
   failed_when: false
