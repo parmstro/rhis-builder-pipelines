@@ -6,13 +6,13 @@ BEGIN;
 
 CREATE TABLE IF NOT EXISTS categories (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
+    name VARCHAR(50) NOT NULL UNIQUE,
     description TEXT
 );
 
 CREATE TABLE IF NOT EXISTS suppliers (
     id SERIAL PRIMARY KEY,
-    company_name VARCHAR(100) NOT NULL,
+    company_name VARCHAR(100) NOT NULL UNIQUE,
     contact_name VARCHAR(100),
     contact_title VARCHAR(50),
     address VARCHAR(200),
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS suppliers (
 
 CREATE TABLE IF NOT EXISTS products (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL UNIQUE,
     supplier_id INTEGER REFERENCES suppliers(id),
     category_id INTEGER REFERENCES categories(id),
     quantity_per_unit VARCHAR(50),
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS products (
 
 CREATE TABLE IF NOT EXISTS customers (
     id SERIAL PRIMARY KEY,
-    company_name VARCHAR(100) NOT NULL,
+    company_name VARCHAR(100) NOT NULL UNIQUE,
     contact_name VARCHAR(100),
     contact_title VARCHAR(50),
     address VARCHAR(200),
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS customers (
 
 CREATE TABLE IF NOT EXISTS shippers (
     id SERIAL PRIMARY KEY,
-    company_name VARCHAR(100) NOT NULL,
+    company_name VARCHAR(100) NOT NULL UNIQUE,
     phone VARCHAR(30)
 );
 
