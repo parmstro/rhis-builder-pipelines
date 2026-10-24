@@ -1,4 +1,5 @@
 ---
+
 # Called for each content view in content_views
 - name: "Set up the environment - assume we want to publish"
   ansible.builtin.set_fact:
@@ -61,7 +62,9 @@
   when: publish_content
   block:
     - name: "Update the errata by date filter"
-      when: not cv_info.content_view.composite
+      when: 
+        - not cv_info.content_view.composite
+        - cv.date_filter_name is defined
       redhat.satellite.content_view_filter_rule:
         username: "{{ satellite_username }}"
         password: "{{ satellite_password }}"
